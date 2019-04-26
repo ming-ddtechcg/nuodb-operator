@@ -65,32 +65,36 @@ Kubectl  create secret docker-registry pull-secret --n $OPERATOR_NAMESPACE \
 # Deploy the NuoDB Operator
 To deploy the NuoDB Operator into your Kubernetes cluster, run the following commands:
 
-**# Change directory into the NuoDB Operator directory**
+ ```
+# Change directory into the NuoDB Operator directory
+cd nuodb-operator
+ ```
 
-&ensp; `cd nuodb-operator`
+ ```
+ # Create the K8s Custom Resource Definition for the NuoDB Operator
+kubectl create -f deploy/crd.yaml
+ ```
 
-**# Create the K8s Custom Resource Definition for the NuoDB Operator**
-
-&ensp; `kubectl create -f deploy/crd.yaml`
-
-**# Create the K8s Role Based Access Control for the NuoDB Operator**
-
-&ensp; `kubectl create -n $OPERATOR_NAMESPACE -f deploy/rbac.yaml`
-
-**# Create the NuoDB Operator**
-
-&ensp; `kubectl create -n $OPERATOR_NAMESPACE -f deploy/operator.yaml`
-
-**# Create Cluster Service Version (ONLY RUN THIS IF YOU HAVE OLM INSTALLED)**
-
-&ensp; `kubectl create -n $OPERATOR_NAMESPACE -f deploy/csv.yaml`
+ ```
+ # Create the K8s Role Based Access Control for the NuoDB Operator
+kubectl create -n $OPERATOR_NAMESPACE -f deploy/rbac.yaml
+ ```
+ ```
+ # Create the NuoDB Operator
+kubectl create -n $OPERATOR_NAMESPACE -f deploy/operator.yaml
+ ```
+ ```
+# Create Cluster Service Version (ONLY RUN THIS IF YOU HAVE OLM INSTALLED)
+kubectl create -n $OPERATOR_NAMESPACE -f deploy/csv.yaml
+ ```
 
 # Deploy the NuoDB Database
 To deploy the NuoDB database into your Kubernetes cluster, run the following command:
 
-**# Create the Custom Resource to deploy the NuoDB database**
-
-&ensp; `kubectl create -n $OPERATOR_NAMESPACE -f deploy/cr.yaml`
+ ```
+ # Create the Custom Resource to deploy the NuoDB database
+kubectl create -n $OPERATOR_NAMESPACE -f deploy/cr.yaml
+ ```
 
 &ensp; &ensp; _**Note:** Before running the above create Customer Resource file command, this is where you have the option to configure your database just the way you want it._
 
