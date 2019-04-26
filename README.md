@@ -68,22 +68,16 @@ To deploy the NuoDB Operator into your Kubernetes cluster, run the following com
  ```
 # Change directory into the NuoDB Operator directory
 cd nuodb-operator
- ```
 
- ```
  # Create the K8s Custom Resource Definition for the NuoDB Operator
 kubectl create -f deploy/crd.yaml
- ```
 
- ```
  # Create the K8s Role Based Access Control for the NuoDB Operator
 kubectl create -n $OPERATOR_NAMESPACE -f deploy/rbac.yaml
- ```
- ```
+
  # Create the NuoDB Operator
 kubectl create -n $OPERATOR_NAMESPACE -f deploy/operator.yaml
- ```
- ```
+
 # Create Cluster Service Version (ONLY RUN THIS IF YOU HAVE OLM INSTALLED)
 kubectl create -n $OPERATOR_NAMESPACE -f deploy/csv.yaml
  ```
