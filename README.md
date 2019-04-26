@@ -1,7 +1,7 @@
 # The NuoDB Operator
 The NuoDB Kubernetes Operator deploys the NuoDB Community Edition (CE) database on OpenShift  3.11 or greater. It also supports either ephemeral or persistent storage options with configurations to run NuoDB Insights, a visual database monitoring Web UI, and start a sample application (ycsb) to quickly generate a configurable SQL workload against the database.
 
-## Prerequisites
+# Prerequisites
 ### OpenShift Version
 OpenShift 3.11 or 4.x installed with OLM - Operator Lifecycle Manager
 
@@ -62,33 +62,33 @@ Kubectl  create secret docker-registry pull-secret --n $OPERATOR_NAMESPACE \
    --docker-email='yourEmailAddr'  --docker-server='registry.connect.redhat.com'
  ```
 
-## Deploy the NuoDB Operator
+# Deploy the NuoDB Operator
 To deploy the NuoDB Operator into your Kubernetes cluster, run the following commands:
 
-<h3># Change directory into the NuoDB Operator directory</h3>
+**# Change directory into the NuoDB Operator directory**
 
 &ensp; `cd nuodb-operator`
 
-<h3># Create the K8s Custom Resource Definition for the NuoDB Operator</h3>
+**# Create the K8s Custom Resource Definition for the NuoDB Operator**
 
 &ensp; `kubectl create -f deploy/crd.yaml`
 
-<h3># Create the K8s Role Based Access Control for the NuoDB Operator</h3>
+**# Create the K8s Role Based Access Control for the NuoDB Operator**
 
 &ensp; `kubectl create -n $OPERATOR_NAMESPACE -f deploy/rbac.yaml`
 
-<h3># Create the NuoDB Operator</h3>
+**# Create the NuoDB Operator**
 
 &ensp; `kubectl create -n $OPERATOR_NAMESPACE -f deploy/operator.yaml`
 
-<h3># Create Cluster Service Version (ONLY RUN THIS IF YOU HAVE OLM INSTALLED)</h3>
+**# Create Cluster Service Version (ONLY RUN THIS IF YOU HAVE OLM INSTALLED)**
 
 &ensp; `kubectl create -n $OPERATOR_NAMESPACE -f deploy/csv.yaml`
 
-## Deploy the NuoDB Database
+# Deploy the NuoDB Database
 To deploy the NuoDB database into your Kubernetes cluster, run the following command:
 
-<h3># Create the Custom Resource to deploy the NuoDB database</h3>
+**# Create the Custom Resource to deploy the NuoDB database**
 
 &ensp; `kubectl create -n $OPERATOR_NAMESPACE -f deploy/cr.yaml`
 
@@ -147,7 +147,7 @@ kubectl delete -n $OPERATOR_NAMESPACE -f deploy/cr.yaml
 kubectl delete -n $OPERATOR_NAMESPACE -f deploy/csv.yaml 
 kubectl delete -n $OPERATOR_NAMESPACE -f deploy/operator.yaml 
 kubectl delete -n $OPERATOR_NAMESPACE -f deploy/rbac.yaml 
-kubectl delete deployments nuodb-operator
+kubectl delete deployments nuodb-ce-operator
 ssh $STORAGE_NODE 'rm -rf /mnt/local-storage/disk0/nuodb'
 kubectl delete pv local-disk-0
 kubectl delete sc local-disk
