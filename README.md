@@ -2,11 +2,12 @@
 The NuoDB Kubernetes Operator deploys the NuoDB Community Edition (CE) database on OpenShift 3.11 or 4. It also supports either ephemeral or persistent storage options with configurations to run NuoDB Insights, a visual database monitoring Web UI, and start a sample SQL application (ycsb) to quickly generate a user-configurable SQL workload against the database.
 
 This page is organized into the following sections:
-[Install Prerequisites](#Install-Prerequisites)
 
-[Install the NuoDB Operator](#Install-the-NuoDB-Operator)
+   [Install Prerequisites](#Install-Prerequisites)
 
-[Deploy the NuoDB Database](#Deploy-the-NuoDB-Database)
+   [Install the NuoDB Operator](#Install-the-NuoDB-Operator)
+
+   [Deploy the NuoDB Database](#Deploy-the-NuoDB-Database)
 
 # Install Prerequisites
 
