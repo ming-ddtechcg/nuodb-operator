@@ -1,9 +1,7 @@
 # The NuoDB Operator
-The NuoDB Kubernetes Operator deploys the NuoDB Community Edition (CE) database on OpenShift  3.11 or greater. It also supports either ephemeral or persistent storage options with configurations to run NuoDB Insights, a visual database monitoring Web UI, and start a sample application (ycsb) to quickly generate a configurable SQL workload against the database.
+The NuoDB Kubernetes Operator deploys the NuoDB Community Edition (CE) database on OpenShift 3.11 or 4. It also supports either ephemeral or persistent storage options with configurations to run NuoDB Insights, a visual database monitoring Web UI, and start a sample SQL application (ycsb) to quickly generate a user-configurable SQL workload against the database.
 
 # Prerequisites
-### OpenShift Version
-OpenShift 3.11 or 4.x installed with OLM - Operator Lifecycle Manager
 
 ### Clone a copy of the NuoDB Operator from Github
 In your home or working directory, run:
@@ -21,10 +19,13 @@ export OPERATOR_NAMESPACE=nuodb
 export STORAGE_NODE=yourStorageNodeName
 ```
 
-### Disable Linux Transparent Huge Pages (THP) on each node
-Copy this shell script to each node that will host NuoDB pods (containers), and execute from the root user or user with root group privileges.
+### Disable Linux Transparent Huge Pages (THP) on each cluster node
+Run these commmands as the root user (or a user with root group privilages) on each cluster node that will host NuoDB pods (containers).
 
-&ensp; `nuodb-operator/nuodb-prereq/thp-tuned.sh`
+```
+echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/enabled
+echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/defrag
+```
 
 ### Node Labeling
 Label the nodes you want to run NuoDB pods.
