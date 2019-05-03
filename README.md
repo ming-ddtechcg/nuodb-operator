@@ -57,7 +57,9 @@ sudo chown -R root:root /mnt/local-storage
 
 &ensp; `kubectl new-project nuodb`
 
-### Create the Kubernetes container image pull secret for the NuoDB Operator and NuoDB container image
+### Create the Kubernetes image pull secret to access the Red Hat Container Catalog (RHCC)
+
+This secret will be used to pull the NuoDB Operator and NuoDB container images
 
 ```
 Kubectl  create secret docker-registry pull-secret --n $OPERATOR_NAMESPACE \
