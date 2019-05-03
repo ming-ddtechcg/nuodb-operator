@@ -71,7 +71,6 @@ Kubectl  create secret docker-registry pull-secret --n $OPERATOR_NAMESPACE \
 
 In OpenShift 4.x, the NuoDB Operator is available to install and deploy directly from the OpenShift OperatorHub, an integrated service catalog, accessible from within the OpenShift 4 Web UI which creates a seamless - single click experience - that allows users to deploy the NuoDB Operator from catalog-to-cluster in seconds.
 
-```
 1. Select *Projects* from the OpenShift 4 left toolbar and click the *NuoDB* project to make
    it your current project.
 2. Select the *peratorHub* under the *Catalog* section in the OCP 4 left toolbar.
@@ -83,7 +82,6 @@ In OpenShift 4.x, the NuoDB Operator is available to install and deploy directly
    installed, see "1 installed" message.
 7. To verify the NuoDB Operator installed correctly, select *Installed Operators* from the left
    toolbar. The STATUS column should show "Install Successed"
-```
 
 ## OpenShift 3.11 
 
