@@ -75,7 +75,7 @@ To install the NuoDB Operator into your Kubernetes cluster, follow the steps ind
 
 In OpenShift 4.x, the NuoDB Operator is available to install directly from the OpenShift OperatorHub, an integrated service catalog, accessible from within the OpenShift 4 Web UI which creates a seamless - single click experience - that allows users to install the NuoDB Operator from catalog-to-cluster in seconds.
 
-1. Select *Projects* from the OpenShift 4 left toolbar and click the *NuoDB* project to make
+1. Select &ensp; `Projects` from the OpenShift 4 left toolbar and click the *NuoDB* project to make
    it your current project.
 2. Select the *OperatorHub* under the *Catalog* section in the OCP 4 left toolbar.
 3. Select the *Database* filter and scroll down to the NuoDB Application tile and click the tile.
