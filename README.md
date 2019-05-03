@@ -30,7 +30,7 @@ echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/defrag
 ### Node Labeling
 Label the nodes you want to run NuoDB pods.
 
-NOTE: The instructions on this page use the Kubernetes "kubectl" command for command portability reasons. You can replace the kubectl command with the OpenShift *oc* command when running commands if you prefer.
+_**Note:** The instructions on this page use the Kubernetes &ensp;`kubectl` command for command portability reasons. You can replace the kubectl command with the OpenShift *oc* command when running commands if you prefer._
 
 &ensp; `kubectl  label node <node name> nuodb.com/zone=a`
 
