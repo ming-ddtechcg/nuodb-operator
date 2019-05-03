@@ -10,8 +10,6 @@ This page is organized into the following sections:
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Deploy the NuoDB Database](#Deploy-the-NuoDB-Database)
 
 
-
-
 # Install Prerequisites
 
 ### Clone a copy of the NuoDB Operator from Github
