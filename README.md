@@ -51,7 +51,7 @@ sudo chown -R root:root /mnt/local-storage
 
 &ensp; `kubectl create -f nuodb-operator/local-disk-class.yaml`
 
-### Create the nuodb project (if not already created)
+### Create the "nuodb" project (if not already created)
 
 NOTE: The instructions on this page use the "kubectl" command for command portability reasons. You can replace the kubectl command with the OpenShift "oc" command when running commands if you prefer.
 
@@ -79,7 +79,6 @@ In OpenShift 4.x, the NuoDB Operator is available to install and deploy directly
 5. On the page that displays *Create Operator Subscription* select *Subscribe* to subscribe to the NuoDB Operator.
 6. In less than a minute, on the page that displays should indicate the NuoDB Operator has been installed, see "1 installed" message.
 7. To verify the NuoDB Operator installed correctly, select *Installed Operators* from the left toolbar. The STATUS column should show "Install Successed"
-
 ```
 
 ## OpenShift 3.11 
