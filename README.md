@@ -30,6 +30,8 @@ echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/defrag
 ### Node Labeling
 Label the nodes you want to run NuoDB pods.
 
+NOTE: The instructions on this page use the Kubernetes "kubectl" command for command portability reasons. You can replace the kubectl command with the OpenShift *oc* command when running commands if you prefer.
+
 &ensp; `kubectl  label node <node name> nuodb.com/zone=a`
 
 _**Note:** The label value, in this example "a", can be any value._
@@ -52,8 +54,6 @@ sudo chown -R root:root /mnt/local-storage
 &ensp; `kubectl create -f nuodb-operator/local-disk-class.yaml`
 
 ### Create the "nuodb" project (if not already created)
-
-NOTE: The instructions on this page use the "kubectl" command for command portability reasons. You can replace the kubectl command with the OpenShift "oc" command when running commands if you prefer.
 
 &ensp; `kubectl new-project nuodb`
 
