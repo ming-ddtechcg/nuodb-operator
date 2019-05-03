@@ -3,11 +3,11 @@ The NuoDB Kubernetes Operator deploys the NuoDB Community Edition (CE) database 
 
 This page is organized into the following sections:
 
-<p>[Install Prerequisites](#Install-Prerequisites)
+&ensp;[Install Prerequisites](#Install-Prerequisites)
 
-[Install the NuoDB Operator](#Install-the-NuoDB-Operator)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Install the NuoDB Operator](#Install-the-NuoDB-Operator)
 
-[Deploy the NuoDB Database](#Deploy-the-NuoDB-Database)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Deploy the NuoDB Database](#Deploy-the-NuoDB-Database)
 
 
 # Install Prerequisites
