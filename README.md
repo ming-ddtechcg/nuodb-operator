@@ -114,7 +114,7 @@ To deploy the NuoDB database into your Kubernetes cluster, run the following com
 kubectl create -n $OPERATOR_NAMESPACE -f deploy/cr.yaml
  ```
 
-&ensp; &ensp; _**Note:** Before running the above create Customer Resource file command, this is where you have the option to configure your database just the way you want it._
+_**Note:** Before running the above create Customer Resource file command, this is where you have the option to configure your database just the way you want it._
 
 ### Sample cr.yaml deployment files
 
