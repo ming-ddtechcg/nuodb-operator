@@ -68,7 +68,8 @@ sudo chown -R root:root /mnt/local-storage
 
 ### Create the Kubernetes image pull secret to access the Red Hat Container Catalog (RHCC)
 
-This secret will be used to pull the NuoDB Operator and NuoDB container images
+This secret will be used to pull the NuoDB Operator and NuoDB container images from the  Red Hat Container
+Catalog (RHCC). Enter your Red Hat login credentials for the --docker-username and --docker-password values.
 
 ```
 Kubectl  create secret docker-registry pull-secret --n $OPERATOR_NAMESPACE \
