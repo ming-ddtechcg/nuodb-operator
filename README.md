@@ -1,9 +1,16 @@
 # The NuoDB Operator
-The NuoDB Kubernetes Operator deploys the NuoDB Community Edition (CE) database on OpenShift  3.11 or greater. It also supports either ephemeral or persistent storage options with configurations to run NuoDB Insights, a visual database monitoring Web UI, and start a sample application (ycsb) to quickly generate a configurable SQL workload against the database.
+The NuoDB Kubernetes Operator deploys the NuoDB Community Edition (CE) database on OpenShift 3.11 or 4. It also supports either ephemeral or persistent storage options with configurations to run NuoDB Insights, a visual database monitoring Web UI, and start a sample SQL application (ycsb) to quickly generate a user-configurable SQL workload against the database.
 
-# Prerequisites
-### OpenShift Version
-OpenShift 3.11 or 4.x installed with OLM - Operator Lifecycle Manager
+This page is organized in the following sections:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Install Prerequisites](#Install-Prerequisites)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Install the NuoDB Operator](#Install-the-NuoDB-Operator)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Deploy the NuoDB Database](#Deploy-the-NuoDB-Database)
+
+
+# Install Prerequisites
 
 ### Clone a copy of the NuoDB Operator from Github
 In your home or working directory, run:
@@ -21,13 +28,18 @@ export OPERATOR_NAMESPACE=nuodb
 export STORAGE_NODE=yourStorageNodeName
 ```
 
-### Disable Linux Transparent Huge Pages (THP) on each node
-Copy this shell script to each node that will host NuoDB pods (containers), and execute from the root user or user with root group privileges.
+### Disable Linux Transparent Huge Pages (THP) on each cluster node
+Run these commmands as the root user (or a user with root group privilages) on each cluster node that will host NuoDB pods (containers).
 
-&ensp; `nuodb-operator/nuodb-prereq/thp-tuned.sh`
+```
+echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/enabled
+echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/defrag
+```
 
 ### Node Labeling
 Label the nodes you want to run NuoDB pods.
+
+_**Note:** The instructions on this page use the Kubernetes &ensp;`kubectl` command for command portability reasons. You can replace the kubectl command with the OpenShift &ensp;`oc` command when running commands if you prefer._
 
 &ensp; `kubectl  label node <node name> nuodb.com/zone=a`
 
@@ -50,11 +62,14 @@ sudo chown -R root:root /mnt/local-storage
 
 &ensp; `kubectl create -f nuodb-operator/local-disk-class.yaml`
 
-### Create the nuodb project (if not already created)
+### Create the "nuodb" project (if not already created)
 
 &ensp; `kubectl new-project nuodb`
 
-### Create the Kubernetes container image pull secret
+### Create the Kubernetes image pull secret to access the Red Hat Container Catalog (RHCC)
+
+This secret will be used to pull the NuoDB Operator and NuoDB container images from the  Red Hat Container
+Catalog (RHCC). Enter your Red Hat login credentials for the --docker-username and --docker-password values.
 
 ```
 Kubectl  create secret docker-registry pull-secret --n $OPERATOR_NAMESPACE \
@@ -62,8 +77,27 @@ Kubectl  create secret docker-registry pull-secret --n $OPERATOR_NAMESPACE \
    --docker-email='yourEmailAddr'  --docker-server='registry.connect.redhat.com'
  ```
 
-# Deploy the NuoDB Operator
-To deploy the NuoDB Operator into your Kubernetes cluster, run the following commands:
+# Install the NuoDB Operator
+
+To install the NuoDB Operator into your Kubernetes cluster, follow the steps indicated for the OpenShift version you are using.
+
+## OpenShift 4
+
+In OpenShift 4.x, the NuoDB Operator is available to install directly from the OpenShift OperatorHub, an integrated service catalog, accessible from within the OpenShift 4 Web UI which creates a seamless - single click experience - that allows users to install the NuoDB Operator from catalog-to-cluster in seconds.
+
+1. Select &ensp;`Projects` from the OpenShift 4 left toolbar and click the &ensp;`NuoDB` project to make
+   it your current project.
+2. Select the &ensp;`OperatorHub` under the &ensp;`Catalog` section in the OCP 4 left toolbar.
+3. Select the &ensp;`Database` filter and scroll down to the NuoDB Application tile and click the tile.
+4. In the right-hand corner of the NuoDB Operator page, click the &ensp;`Install` button.
+5. On the "Create Operator Subscription" page, select &ensp;`Subscribe` to subscribe to the NuoDB Operator.
+6. In less than a minute, on the page that displays should indicate the NuoDB Operator has been
+   installed, see "1 installed" message.
+7. To verify the NuoDB Operator installed correctly, select &ensp;`Installed Operators` from the left
+   toolbar. The STATUS column should show "Install Successed"
+8. Select &ensp;`Status` under the &ensp;`Projects` on the left toolbar to view your running Operator.
+
+## OpenShift 3.11 
 
  ```
 # Change directory into the NuoDB Operator directory
@@ -90,7 +124,7 @@ To deploy the NuoDB database into your Kubernetes cluster, run the following com
 kubectl create -n $OPERATOR_NAMESPACE -f deploy/cr.yaml
  ```
 
-&ensp; &ensp; _**Note:** Before running the above create Customer Resource file command, this is where you have the option to configure your database just the way you want it._
+_**Note:** Before running the above create Custom Resource file command, this is where you have the option to configure your database just the way you want it._
 
 ### Sample cr.yaml deployment files
 
