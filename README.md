@@ -29,11 +29,19 @@ export STORAGE_NODE=yourStorageNodeName
 ```
 
 ### Disable Linux Transparent Huge Pages (THP) on each cluster node
-Run these commmands as the root user (or a user with root group privilages) on each cluster node that will host NuoDB pods (containers).
+Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers).
 
 ```
 echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/enabled
 echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/defrag
+```
+### Set container local-storage permissions on each cluster node
+
+```
+sudo mkdir -p /mnt/local-storage/disk0
+sudo chmod -R 777 /mnt/local-storage/
+sudo chcon -R unconfined_u:object_r:svirt_sandbox_file_t:s0 /mnt/local-storage
+sudo chown -R root:root /mnt/local-storage
 ```
 
 ### Node Labeling
@@ -48,15 +56,6 @@ _**Note:** The label value, in this example "a", can be any value._
 Next, label one of these nodes as your storage node. This is the node that will host your NouDB Storage Manager (SM) pod and is where you database persistent storage will reside. Ensure there is sufficient disk space. To create this label run:
 
 &ensp; `kubectl  label node $STORAGE_NODE nuodb.com/node-type=storage`
-
-### Set container local-storage permissions on each node
-
-```
-sudo mkdir -p /mnt/local-storage/disk0
-sudo chmod -R 777 /mnt/local-storage/
-sudo chcon -R unconfined_u:object_r:svirt_sandbox_file_t:s0 /mnt/local-storage
-sudo chown -R root:root /mnt/local-storage
-```
 
 ### Create the Kubernetes storage class "local-disk" and persistent volume
 
@@ -94,7 +93,7 @@ In OpenShift 4.x, the NuoDB Operator is available to install directly from the O
 6. In less than a minute, on the page that displays should indicate the NuoDB Operator has been
    installed, see "1 installed" message.
 7. To verify the NuoDB Operator installed correctly, select &ensp;`Installed Operators` from the left
-   toolbar. The STATUS column should show "Install Successed"
+   toolbar. The STATUS column should show "Install Succeeded".
 8. Select &ensp;`Status` under the &ensp;`Projects` on the left toolbar to view your running Operator.
 
 ## OpenShift 3.11 
