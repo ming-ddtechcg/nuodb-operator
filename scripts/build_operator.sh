@@ -4,11 +4,11 @@
 helpFunction()
 {
    echo ""
-   echo "Usage: $0 -u docker-username -p docker-password -s docker-server -r repo-name -t image-tag -o nuodb-ce-operator-branch-name -l nuodb-ce-helm-branch-name"
+   echo "Usage: $0 -u docker-username -p docker-password -s docker-server -r repo-name -t image-tag -o nuodb-operator-branch-name -l nuodb-ce-helm-branch-name"
    echo -e "\t-u Docker username for pushing the image"
    echo -e "\t-p Docker password"
    echo -e "\t-s Docker server to push (e.g. quay.io)"
-   echo -e "\t-r Repository name in the server including username"
+   echo -e "\t-r Repository name in the server including username (e.g nuodb/nuodb-operator)"
    echo -e "\t-t Image tag to be used"
    echo -e "\t-o nuodb-ce-operator Branch name to use"
    echo -e "\t-l nuodb-ce-helm Branch name to use"
@@ -42,8 +42,8 @@ GOLANG_VERSION=1.11.4
 
 mkdir $BUILDDIR
 cd $BUILDDIR
-git clone https://github.com/nuodb/nuodb-ce-operator.git 
-cd nuodb-ce-operator
+git clone https://github.com/nuodb/nuodb-operator.git 
+cd nuodb-operator
 git checkout $obranch
 
 echo "Installing GoLang version: '${GOLANG_VERSION}' ..."
@@ -80,16 +80,17 @@ make dep install
 operator-sdk version
 
 echo "Making helm-dir and getting latest"
-cd $BUILDDIR/nuodb-ce-operator
+cd $BUILDDIR/nuodb-operator
 CURRENTDIR=$(pwd)
+mkdir -p helm-charts/nuodb/
 echo "Cureent dir : $CURRENTDIR"
 cd $BUILDDIR
 git clone https://github.com/nuodb/nuodb-ce-helm.git
 cd nuodb-ce-helm/
 git checkout $hbranch
 rm -fr .git/
-cd $BUILDDIR/nuodb-ce-operator
-mv $BUILDDIR/nuodb-ce-helm/ $BUILDDIR/nuodb-ce-operator/helm-charts/nuodb
+cd $BUILDDIR/nuodb-operator
+mv $BUILDDIR/nuodb-ce-helm/ $BUILDDIR/nuodb-operator/helm-charts/nuodb
 git status
 
 docker version
@@ -98,6 +99,6 @@ docker login -u $dusername -p $dpassword $dserver
 
 
 echo "Build NuoDB Operator..."
-export NUODB_OP_IMAGE=$dserver/$dusername/$rname:$tag
+export NUODB_OP_IMAGE=$dserver/$rname:$tag
 operator-sdk build $NUODB_OP_IMAGE
 docker push $NUODB_OP_IMAGE
