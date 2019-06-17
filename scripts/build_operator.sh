@@ -8,7 +8,7 @@ helpFunction()
    echo -e "\t-u Docker username for pushing the image"
    echo -e "\t-p Docker password"
    echo -e "\t-s Docker server to push (e.g. quay.io)"
-   echo -e "\t-r Repository name in the server including username"
+   echo -e "\t-r Repository name in the server including username (e.g nuodb/nuodb-operator)"
    echo -e "\t-t Image tag to be used"
    echo -e "\t-o nuodb-ce-operator Branch name to use"
    echo -e "\t-l nuodb-ce-helm Branch name to use"
@@ -82,6 +82,7 @@ operator-sdk version
 echo "Making helm-dir and getting latest"
 cd $BUILDDIR/nuodb-ce-operator
 CURRENTDIR=$(pwd)
+mkdir -p helm-charts/nuodb/
 echo "Cureent dir : $CURRENTDIR"
 cd $BUILDDIR
 git clone https://github.com/nuodb/nuodb-ce-helm.git
@@ -98,6 +99,6 @@ docker login -u $dusername -p $dpassword $dserver
 
 
 echo "Build NuoDB Operator..."
-export NUODB_OP_IMAGE=$dserver/$dusername/$rname:$tag
+export NUODB_OP_IMAGE=$dserver/$rname:$tag
 operator-sdk build $NUODB_OP_IMAGE
 docker push $NUODB_OP_IMAGE
