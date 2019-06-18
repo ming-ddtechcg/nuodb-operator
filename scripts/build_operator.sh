@@ -83,14 +83,14 @@ echo "Making helm-dir and getting latest"
 cd $BUILDDIR/nuodb-operator
 CURRENTDIR=$(pwd)
 mkdir -p helm-charts/nuodb/
-echo "Cureent dir : $CURRENTDIR"
+echo "Current dir : $CURRENTDIR"
 cd $BUILDDIR
 git clone https://github.com/nuodb/nuodb-ce-helm.git
 cd nuodb-ce-helm/
 git checkout $hbranch
 rm -fr .git/
 cd $BUILDDIR/nuodb-operator
-mv $BUILDDIR/nuodb-ce-helm/ $BUILDDIR/nuodb-operator/helm-charts/nuodb
+cp -a $BUILDDIR/nuodb-ce-helm/. $BUILDDIR/nuodb-operator/helm-charts/nuodb
 git status
 
 docker version
