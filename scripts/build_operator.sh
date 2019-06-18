@@ -90,7 +90,7 @@ cd nuodb-ce-helm/
 git checkout $hbranch
 rm -fr .git/
 cd $BUILDDIR/nuodb-operator
-mv $BUILDDIR/nuodb-ce-helm/ $BUILDDIR/nuodb-operator/helm-charts/nuodb
+cp -a $BUILDDIR/nuodb-ce-helm/. $BUILDDIR/nuodb-operator/helm-charts/nuodb
 git status
 
 docker version
