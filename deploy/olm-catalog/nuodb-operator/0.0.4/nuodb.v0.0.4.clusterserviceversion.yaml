@@ -26,7 +26,7 @@ metadata:
     repository: https://github.com/nuodb/nuodb-operator
     support: NuoDB, Inc.
   name: nuodb-operator.v0.0.4
-  namespace: "nuodb-test1"
+  namespace: "placeholder"
 spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
