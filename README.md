@@ -123,28 +123,30 @@ In OpenShift 4.x, the NuoDB Operator is available to install directly from the O
 
 ## OpenShift 3.11 
 
- ```
-# Change directory into the NuoDB Operator directory
-cd nuodb-operator
+### Install the Operator Lifecycle Manager (OLM)
+```
+kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.1/crds.yaml
+kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.1/olm.yaml
+```
+Change directory into the NuoDB Operator directory
+cd nuodb-operator/deploy
 
- # Create the K8s Custom Resource Definition for the NuoDB Operator
-kubectl create -f deploy/crd.yaml
-
- # Create the K8s Role Based Access Control for the NuoDB Operator
-kubectl create -n $OPERATOR_NAMESPACE -f deploy/rbac.yaml
-
- # Create the NuoDB Operator
-kubectl create -n $OPERATOR_NAMESPACE -f deploy/operator.yaml
-
-# Create Cluster Service Version (ONLY RUN THIS IF YOU HAVE OLM INSTALLED)
-kubectl create -n $OPERATOR_NAMESPACE -f deploy/csv.yaml
+oc create -f catalogSource.yaml 
+oc create -f operatorGroup.yaml
+oc create -f cluster_role.yaml
+oc create -f cluster_role_binding.yaml
+oc create -f role.yaml
+oc create -f role_binding.yaml
+oc create -f local-disk-class.yaml
+oc create -f service_account.yaml 
+oc create -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml 
+oc create  -n $OPERATOR_NAMESPACE -f olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml
  ```
 
 # Deploy the NuoDB Database
 To deploy the NuoDB database into your Kubernetes cluster, run the following command:
 
  ```
- # Create the Custom Resource to deploy the NuoDB database
 kubectl create -n $OPERATOR_NAMESPACE -f deploy/cr.yaml
  ```
 
@@ -170,6 +172,7 @@ spec:
   dbName: test
   dbUser: dba
   dbPassword: secret
+  smCount: 1
   smMemory: 4
   smCpu: 2
   smStorageSize: 20G
