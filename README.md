@@ -3,11 +3,11 @@ The NuoDB Kubernetes Operator deploys the NuoDB Community Edition (CE) database 
 
 The NuoDB Community Edition (CE) feature set is rich enough to allow first time users to experience all the benefits and value points of NuoDB including: 
 
-(1) Ease of scale-out to meet changing application throughput requirements
-(2) Continuous availability even in the event of common network, hardware, and software failures
-(3) NuoDB database and workload visual monitoring with NuoDB Insights
-(4) ANSI SQL
-(5) ACID transactions
+* Ease of scale-out to meet changing application throughput requirements
+* Continuous availability even in the event of common network, hardware, and software failures
+* NuoDB database and workload visual monitoring with NuoDB Insights
+* ANSI SQL
+* ACID transactions
 
 To PoC the NuoDB Enterprise Edition (EE) which also allows users to scale the Storage Manager (SM) database process, contact NuoDB Sales at sales@nuodb.com for a PoC time-based enterprise edition license.
 
