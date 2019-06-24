@@ -12,6 +12,10 @@ This page is organized in the following sections:
 
 # Install Prerequisites
 
+### Create the "nuodb" project (if not already created)
+
+&ensp; `kubectl new-project nuodb`
+
 ### Clone a copy of the NuoDB Operator from Github
 In your home or working directory, run:
 
@@ -29,19 +33,47 @@ export STORAGE_NODE=yourStorageNodeName
 ```
 
 ### Disable Linux Transparent Huge Pages (THP) on each cluster node
-Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers).
+Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers). These commands will disable THP. 
+NOTE: If the nodes are rebooted THP will be reenabled by default, and the commands will need to executed again to disable THP.
 
 ```
 echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/enabled
 echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/defrag
 ```
-### Set container local-storage permissions on each cluster node
+
+### Set container storage pre-requisites
+
+#### FOR ON-PREM: Set container local-storage permissions on each cluster node
 
 ```
 sudo mkdir -p /mnt/local-storage/disk0
 sudo chmod -R 777 /mnt/local-storage/
 sudo chcon -R unconfined_u:object_r:svirt_sandbox_file_t:s0 /mnt/local-storage
 sudo chown -R root:root /mnt/local-storage
+```
+Create the Kubernetes storage class "local-disk" and persistent volume
+
+&ensp; `kubectl create -f nuodb-operator/local-disk-class.yaml`
+
+Set the Kubernetes storage class to use in cr.yaml
+
+```
+adminStorageClass: local-disk
+smStorageClass: local-disk
+```
+
+#### FOR Amazon AWS: Set the Kubernetes storage class to use in cr.yaml
+
+```
+adminStorageClass: gp2
+smStorageClass: gp2
+```
+
+#### FOR Google GCP: Set the Kubernetes storage class to use in cr.yaml 
+
+```
+adminStorageClass: standard
+smStorageClass: standard
 ```
 
 ### Node Labeling
@@ -57,15 +89,12 @@ Next, label one of these nodes as your storage node. This is the node that will 
 
 &ensp; `kubectl  label node $STORAGE_NODE nuodb.com/node-type=storage`
 
-### Create the Kubernetes storage class "local-disk" and persistent volume
+### Create the NuoDB Community Edition (CE) license file
 
-&ensp; `kubectl create -f nuodb-operator/local-disk-class.yaml`
+&ensp; `kubectl create configmap nuodb-lic-configmap -n $OPERATOR_NAMESPACE --from-literal=nuodb.lic=""`
 
-### Create the "nuodb" project (if not already created)
-
-&ensp; `kubectl new-project nuodb`
-
-### Create the Kubernetes image pull secret to access the Red Hat Container Catalog (RHCC)
+### Create the Kubernetes image pull secret to access the Red Hat Container Catalog (RHCC).
+NOTE: If using Quay.io to pull the NuoDB Operator image, a secret is not required because the NuoDB Quay.io repository is public.
 
 This secret will be used to pull the NuoDB Operator and NuoDB container images from the  Red Hat Container
 Catalog (RHCC). Enter your Red Hat login credentials for the --docker-username and --docker-password values.
@@ -98,28 +127,30 @@ In OpenShift 4.x, the NuoDB Operator is available to install directly from the O
 
 ## OpenShift 3.11 
 
- ```
-# Change directory into the NuoDB Operator directory
-cd nuodb-operator
+### Install the Operator Lifecycle Manager (OLM)
+```
+kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.1/crds.yaml
+kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.1/olm.yaml
 
- # Create the K8s Custom Resource Definition for the NuoDB Operator
-kubectl create -f deploy/crd.yaml
+Change directory into the NuoDB Operator directory
+cd nuodb-operator/deploy
 
- # Create the K8s Role Based Access Control for the NuoDB Operator
-kubectl create -n $OPERATOR_NAMESPACE -f deploy/rbac.yaml
-
- # Create the NuoDB Operator
-kubectl create -n $OPERATOR_NAMESPACE -f deploy/operator.yaml
-
-# Create Cluster Service Version (ONLY RUN THIS IF YOU HAVE OLM INSTALLED)
-kubectl create -n $OPERATOR_NAMESPACE -f deploy/csv.yaml
+oc create -f catalogSource.yaml 
+oc create -f operatorGroup.yaml
+oc create -f cluster_role.yaml
+oc create -f cluster_role_binding.yaml
+oc create -f role.yaml
+oc create -f role_binding.yaml
+oc create -f local-disk-class.yaml
+oc create -f service_account.yaml 
+oc create -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml 
+oc create  -n $OPERATOR_NAMESPACE -f olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml
  ```
 
 # Deploy the NuoDB Database
 To deploy the NuoDB database into your Kubernetes cluster, run the following command:
 
  ```
- # Create the Custom Resource to deploy the NuoDB database
 kubectl create -n $OPERATOR_NAMESPACE -f deploy/cr.yaml
  ```
 
@@ -145,6 +176,7 @@ spec:
   dbName: test
   dbUser: dba
   dbPassword: secret
+  smCount: 1
   smMemory: 4
   smCpu: 2
   smStorageSize: 20G
