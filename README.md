@@ -12,7 +12,7 @@ This page is organized in the following sections:
 
 # Install Prerequisites
 
-### Clone a copy of the NuoDB Operator from Github if planning to use OpenShift 3.11
+### Clone a copy of the NuoDB Operator from Github
 In your home or working directory, run:
 
 &ensp; `git clone https://github.com/nuodb/nuodb-operator`
