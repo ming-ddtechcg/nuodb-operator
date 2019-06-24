@@ -53,7 +53,7 @@ sudo chown -R root:root /mnt/local-storage
 ```
 Create the Kubernetes storage class "local-disk" and persistent volume
 
-&ensp; `kubectl create -f nuodb-operator/local-disk-class.yaml`
+&ensp; `kubectl create -f nuodb-operator/deploy/local-disk-class.yaml`
 
 Set the Kubernetes storage class to use in cr.yaml
 
@@ -100,7 +100,7 @@ This secret will be used to pull the NuoDB Operator and NuoDB container images f
 Catalog (RHCC). Enter your Red Hat login credentials for the --docker-username and --docker-password values.
 
 ```
-Kubectl  create secret docker-registry pull-secret --n $OPERATOR_NAMESPACE \
+kubectl  create secret docker-registry pull-secret --n $OPERATOR_NAMESPACE \
    --docker-username='yourUserName' --docker-password='yourPassword' \
    --docker-email='yourEmailAddr'  --docker-server='registry.connect.redhat.com'
  ```
@@ -141,7 +141,6 @@ oc create -f cluster_role.yaml
 oc create -f cluster_role_binding.yaml
 oc create -f role.yaml
 oc create -f role_binding.yaml
-oc create -f local-disk-class.yaml
 oc create -f service_account.yaml 
 oc create -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml 
 oc create  -n $OPERATOR_NAMESPACE -f olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml
