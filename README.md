@@ -90,7 +90,8 @@ Next, label one of these nodes as your storage node. This is the node that will 
 
 &ensp; `kubectl new-project nuodb`
 
-### Create the Kubernetes image pull secret to access the Red Hat Container Catalog (RHCC). NOTE: If using Quay.io a secret is not required because the NuoDB Quay.io repository is public.
+### Create the Kubernetes image pull secret to access the Red Hat Container Catalog (RHCC).
+NOTE: If using Quay.io to pull the NuoDB Operator image, a secret is not required because the NuoDB Quay.io repository is public.
 
 This secret will be used to pull the NuoDB Operator and NuoDB container images from the  Red Hat Container
 Catalog (RHCC). Enter your Red Hat login credentials for the --docker-username and --docker-password values.
