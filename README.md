@@ -85,6 +85,9 @@ Next, label one of these nodes as your storage node. This is the node that will 
 
 &ensp; `kubectl  label node $STORAGE_NODE nuodb.com/node-type=storage`
 
+### Create the NuoDB Community Edition (CE) license file
+
+&ensp; `kubectl create configmap nuodb-lic-configmap -n $OPERATOR_NAMESPACE --from-literal=nuodb.lic=""`
 
 ### Create the "nuodb" project (if not already created)
 
