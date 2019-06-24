@@ -12,6 +12,10 @@ This page is organized in the following sections:
 
 # Install Prerequisites
 
+### Create the "nuodb" project (if not already created)
+
+&ensp; `kubectl new-project nuodb`
+
 ### Clone a copy of the NuoDB Operator from Github
 In your home or working directory, run:
 
@@ -88,10 +92,6 @@ Next, label one of these nodes as your storage node. This is the node that will 
 ### Create the NuoDB Community Edition (CE) license file
 
 &ensp; `kubectl create configmap nuodb-lic-configmap -n $OPERATOR_NAMESPACE --from-literal=nuodb.lic=""`
-
-### Create the "nuodb" project (if not already created)
-
-&ensp; `kubectl new-project nuodb`
 
 ### Create the Kubernetes image pull secret to access the Red Hat Container Catalog (RHCC).
 NOTE: If using Quay.io to pull the NuoDB Operator image, a secret is not required because the NuoDB Quay.io repository is public.
