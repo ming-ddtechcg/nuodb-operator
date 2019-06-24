@@ -1,6 +1,16 @@
 # The NuoDB Operator
 The NuoDB Kubernetes Operator deploys the NuoDB Community Edition (CE) database on OpenShift 3.11 or 4. It also supports either ephemeral or persistent storage options with configurations to run NuoDB Insights, a visual database monitoring Web UI, and start a sample SQL application (ycsb) to quickly generate a user-configurable SQL workload against the database.
 
+The NuoDB Community Edition (CE) feature set is rich enough to allow first time users to experience all the benefits and value points of NuoDB including: 
+
+(1) Ease of scale-out to meet changing application throughput requirements
+(2) Continuous availability even in the event of common network, hardware, and software failures
+(3) NuoDB database and workload visual monitoring with NuoDB Insights
+(4) ANSI SQL
+(5) ACID transactions
+
+To PoC the NuoDB Enterprise Edition (EE) which also allows users to scale the Storage Manager (SM) database process, contact NuoDB Sales at sales@nuodb.com for a PoC time-based enterprise edition license.
+
 This page is organized in the following sections:
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Install Prerequisites](#Install-Prerequisites)
@@ -43,7 +53,11 @@ echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/defrag
 
 ### Set container storage pre-requisites
 
+Red hat GlusterFS storage is the default storage class for both NuoDB Admin and Storage Manager (SM) pods. 
+If you would like to change the default, please see below: 
+
 #### FOR ON-PREM: Set container local-storage permissions on each cluster node
+NOTE: When using the local disk storage option only 1 Admin pod is supported.
 
 ```
 sudo mkdir -p /mnt/local-storage/disk0
@@ -100,7 +114,7 @@ This secret will be used to pull the NuoDB Operator and NuoDB container images f
 Catalog (RHCC). Enter your Red Hat login credentials for the --docker-username and --docker-password values.
 
 ```
-kubectl  create secret docker-registry pull-secret --n $OPERATOR_NAMESPACE \
+kubectl  create secret docker-registry pull-secret \
    --docker-username='yourUserName' --docker-password='yourPassword' \
    --docker-email='yourEmailAddr'  --docker-server='registry.connect.redhat.com'
  ```
@@ -143,6 +157,7 @@ oc create -f role.yaml
 oc create -f role_binding.yaml
 oc create -f service_account.yaml 
 oc create -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml 
+sed 's/placeholder/$OPERATOR_NAMESPACE/' olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml
 oc create  -n $OPERATOR_NAMESPACE -f olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml
  ```
 
@@ -205,15 +220,19 @@ If you enabled NuoDB Insights (highly recommended) you can confirm it's run stat
 ### To remove the NuoDB database deployment and NuoDB Operator
 
 ```
-kubectl delete -n $OPERATOR_NAMESPACE -f deploy/cr.yaml 
-kubectl delete -n $OPERATOR_NAMESPACE -f deploy/csv.yaml 
-kubectl delete -n $OPERATOR_NAMESPACE -f deploy/operator.yaml 
-kubectl delete -n $OPERATOR_NAMESPACE -f deploy/rbac.yaml 
-kubectl delete deployments nuodb-ce-operator
-ssh $STORAGE_NODE 'rm -rf /mnt/local-storage/disk0/nuodb'
-kubectl delete pv local-disk-0
-kubectl delete sc local-disk
-kubectl delete -f deploy/crd.yaml
+cd nuodb-operator/deploy
+oc delete -f olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml
+oc delete -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml
+oc delete -f service_account.yaml
+oc delete -f local-disk-class.yaml
+oc delete -f role_binding.yaml
+oc delete -f role.yaml
+oc delete -f cluster_role_binding_nuodb-test1.yaml
+oc delete -f cluster_role.yaml
+oc delete -f operatorGroup.yaml
+oc delete -f catalogSource.yaml
+
+oc delete project $OPERATOR_NAMESPACE
 ```
 
 ### Option Database Parameters
