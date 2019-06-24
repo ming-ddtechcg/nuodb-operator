@@ -12,7 +12,7 @@ This page is organized in the following sections:
 
 # Install Prerequisites
 
-### Clone a copy of the NuoDB Operator from Github
+### Clone a copy of the NuoDB Operator from Github if planning to use OpenShift 3.11
 In your home or working directory, run:
 
 &ensp; `git clone https://github.com/nuodb/nuodb-operator`
@@ -29,19 +29,46 @@ export STORAGE_NODE=yourStorageNodeName
 ```
 
 ### Disable Linux Transparent Huge Pages (THP) on each cluster node
-Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers).
+Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers). These commands will disable THP. Note: If the nodes are rebooted THP will be reenabled by default, and the commands will need to executed again to disable THP.
 
 ```
 echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/enabled
 echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/defrag
 ```
-### Set container local-storage permissions on each cluster node
+
+### Set container storage pre-requisites
+
+### FOR ON-PREM: Set container local-storage permissions on each cluster node
 
 ```
 sudo mkdir -p /mnt/local-storage/disk0
 sudo chmod -R 777 /mnt/local-storage/
 sudo chcon -R unconfined_u:object_r:svirt_sandbox_file_t:s0 /mnt/local-storage
 sudo chown -R root:root /mnt/local-storage
+```
+## Create the Kubernetes storage class "local-disk" and persistent volume (for on-prem only)
+
+&ensp; `kubectl create -f nuodb-operator/local-disk-class.yaml`
+
+## Set the Kubernetes storage class to use in cr.yaml
+
+```
+adminStorageClass: local-disk
+smStorageClass: local-disk
+```
+
+### FOR Amazon AWS: Set the Kubernetes storage class to use in cr.yaml
+
+```
+adminStorageClass: gp2
+smStorageClass: gp2
+```
+
+### FOR Google GCP: Set the Kubernetes storage class to use in cr.yaml 
+
+```
+adminStorageClass: standard
+smStorageClass: standard
 ```
 
 ### Node Labeling
@@ -57,15 +84,12 @@ Next, label one of these nodes as your storage node. This is the node that will 
 
 &ensp; `kubectl  label node $STORAGE_NODE nuodb.com/node-type=storage`
 
-### Create the Kubernetes storage class "local-disk" and persistent volume
-
-&ensp; `kubectl create -f nuodb-operator/local-disk-class.yaml`
 
 ### Create the "nuodb" project (if not already created)
 
 &ensp; `kubectl new-project nuodb`
 
-### Create the Kubernetes image pull secret to access the Red Hat Container Catalog (RHCC)
+### Create the Kubernetes image pull secret to access the Red Hat Container Catalog (RHCC). NOTE: If using Quay.io a secret is not required because the NuoDB Quay.io repository is public.
 
 This secret will be used to pull the NuoDB Operator and NuoDB container images from the  Red Hat Container
 Catalog (RHCC). Enter your Red Hat login credentials for the --docker-username and --docker-password values.
