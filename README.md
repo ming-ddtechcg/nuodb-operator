@@ -128,7 +128,7 @@ In OpenShift 4.x, the NuoDB Operator is available to install directly from the O
 ```
 kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.1/crds.yaml
 kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.1/olm.yaml
-```
+
 Change directory into the NuoDB Operator directory
 cd nuodb-operator/deploy
 
