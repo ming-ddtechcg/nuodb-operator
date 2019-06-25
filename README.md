@@ -224,6 +224,17 @@ spec:
   container: nuodb/nuodb-ce:latest
 ```
 
+### Connect to NuoDB Insights Visual Monitoring WebUI
+
+If you optionally chose to install NuoDB Insights, you can connect to it by opening a Web browser using the following URL
+```
+https://insights.nuodb.com/<YOUR SUBSCRIBER ID HERE>
+```
+You can find your SubcriberID by locating the "nuodb-insights" pod, go to the Logs tab, and find the line that indicates your Subscriber ID
+```
+Insights Subscriber ID: <yourIDHere>
+```
+
 ### Check the status of NuoDB Insights visual monitoring tool
 If you enabled NuoDB Insights (highly recommended) you can confirm it's run status by running:
 
