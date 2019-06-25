@@ -22,6 +22,8 @@ This page is organized in the following sections:
 
 # Install Prerequisites
 
+_**Note:** The instructions on this page use the Kubernetes &ensp;`kubectl` command for command portability reasons. You can replace the kubectl command with the OpenShift &ensp;`oc` command when running commands if you prefer._
+
 ### Create the "nuodb" project (if not already created)
 
 &ensp; `kubectl new-project nuodb`
@@ -93,8 +95,6 @@ smStorageClass: standard
 ### Node Labeling
 Label the nodes you want to run NuoDB pods.
 
-_**Note:** The instructions on this page use the Kubernetes &ensp;`kubectl` command for command portability reasons. You can replace the kubectl command with the OpenShift &ensp;`oc` command when running commands if you prefer._
-
 &ensp; `kubectl  label node <node name> nuodb.com/zone=a`
 
 _**Note:** The label value, in this example "a", can be any value._
@@ -149,16 +149,16 @@ kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manage
 Change directory into the NuoDB Operator directory
 cd nuodb-operator/deploy
 
-oc create -f catalogSource.yaml 
-oc create -f operatorGroup.yaml
-oc create -f cluster_role.yaml
-oc create -f cluster_role_binding.yaml
-oc create -f role.yaml
-oc create -f role_binding.yaml
-oc create -f service_account.yaml 
-oc create -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml 
+kubectl create -f catalogSource.yaml 
+kubectl create -f operatorGroup.yaml
+kubectl create -f cluster_role.yaml
+kubectl create -f cluster_role_binding.yaml
+kubectl create -f role.yaml
+kubectl create -f role_binding.yaml
+kubectl create -f service_account.yaml 
+kubectl create -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml 
 sed "s/placeholder/$OPERATOR_NAMESPACE/" olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml > nuodb-csv.yaml
-oc create  -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
+kubectl create  -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
  ```
 
 # Deploy the NuoDB Database
@@ -221,21 +221,21 @@ If you enabled NuoDB Insights (highly recommended) you can confirm it's run stat
 
 ```
 cd nuodb-operator/deploy
-oc delete -f nuodb-csv.yaml
-oc delete -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml
-oc delete -f service_account.yaml
-oc delete -f role_binding.yaml
-oc delete -f role.yaml
-oc delete -f cluster_role_binding_nuodb-test1.yaml
-oc delete -f cluster_role.yaml
-oc delete -f operatorGroup.yaml
-oc delete -f catalogSource.yaml
+kubectl delete -f nuodb-csv.yaml
+kubectl delete -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml
+kubectl delete -f service_account.yaml
+kubectl delete -f role_binding.yaml
+kubectl delete -f role.yaml
+kubectl delete -f cluster_role_binding_nuodb-test1.yaml
+kubectl delete -f cluster_role.yaml
+kubectl delete -f operatorGroup.yaml
+kubectl delete -f catalogSource.yaml
 
-oc delete project $OPERATOR_NAMESPACE
+kubectl delete project $OPERATOR_NAMESPACE
 ```
 ### Remove local-disk storage class if running on-prem
 ```
-oc delete -f local-disk-class.yaml
+kubectl delete -f local-disk-class.yaml
 ```
 
 ### Option Database Parameters
