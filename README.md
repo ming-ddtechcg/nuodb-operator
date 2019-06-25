@@ -250,6 +250,7 @@ Next, delete the nuodb database finalizer by running this command, remove the fi
 kubectl edit nuodb nuodb
 kubectl delete nuodb nuodb
 ```
+Delete the NuoDB persistent storage volumes claims
 ```
 kubectl delete -n $OPERATOR_NAMESPACE pvc --all 
 ```
