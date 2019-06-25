@@ -9,7 +9,7 @@ The NuoDB Community Edition (CE) feature set is rich enough to allow first time 
 * ANSI SQL
 * ACID transactions
 
-To PoC the NuoDB Enterprise Edition (EE) which also allows users to scale the Storage Manager (SM) database process, contact NuoDB Sales at sales@nuodb.com for a PoC time-based enterprise edition license.
+To trial or run a PoC of the NuoDB Enterprise Edition (EE) which also allows users to scale the Storage Manager (SM) database process, contact NuoDB Sales at sales@nuodb.com for a PoC time-based enterprise edition license.
 
 This page is organized in the following sections:
 
@@ -146,16 +146,15 @@ In OpenShift 4.x, the NuoDB Operator is available to install directly from the O
 kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.1/crds.yaml
 kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.1/olm.yaml
 
-Change directory into the NuoDB Operator directory
-cd nuodb-operator/deploy
+### Run the NuoDB Operator yaml files
 
 kubectl create -f catalogSource.yaml 
-kubectl create -f operatorGroup.yaml
-kubectl create -f cluster_role.yaml
 kubectl create -f cluster_role_binding.yaml
-kubectl create -f role.yaml
-kubectl create -f role_binding.yaml
-kubectl create -f service_account.yaml 
+kubectl create -n $OPERATOR_NAMESPACE -f operatorGroup.yaml
+kubectl create -n $OPERATOR_NAMESPACE -f cluster_role.yaml
+kubectl create -n $OPERATOR_NAMESPACE -f role.yaml
+kubectl create -n $OPERATOR_NAMESPACE -f role_binding.yaml
+kubectl create -n $OPERATOR_NAMESPACE -f service_account.yaml 
 kubectl create -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml 
 sed "s/placeholder/$OPERATOR_NAMESPACE/" olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml > nuodb-csv.yaml
 kubectl create  -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
@@ -220,16 +219,21 @@ If you enabled NuoDB Insights (highly recommended) you can confirm it's run stat
 ### Remove the NuoDB database deployment and NuoDB Operator
 
 ```
+kubectl delete configmap nuodb-lic-configmap -n $OPERATOR_NAMESPACE
+
 cd nuodb-operator/deploy
-kubectl delete -f nuodb-csv.yaml
-kubectl delete -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml
-kubectl delete -f service_account.yaml
-kubectl delete -f role_binding.yaml
-kubectl delete -f role.yaml
-kubectl delete -f cluster_role_binding_nuodb-test1.yaml
-kubectl delete -f cluster_role.yaml
-kubectl delete -f operatorGroup.yaml
+kubectl delete -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
 kubectl delete -f catalogSource.yaml
+kubectl delete -f cluster_role_binding.yaml
+kubectl delete -n $OPERATOR_NAMESPACE -f operatorGroup.yaml
+kubectl delete -n $OPERATOR_NAMESPACE -f cluster_role.yaml
+kubectl delete -n $OPERATOR_NAMESPACE -f role.yaml
+kubectl delete -n $OPERATOR_NAMESPACE -f role_binding.yaml
+kubectl delete -n $OPERATOR_NAMESPACE -f service_account.yaml
+kubectl delete -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml
+
+Note: Delete the crd finalizer by running this command and remove the finalizer
+kubectl delete crd nuodbs.nuodb.com
 
 kubectl delete project $OPERATOR_NAMESPACE
 ```
