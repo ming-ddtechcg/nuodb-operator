@@ -226,7 +226,7 @@ OpenShift 4 example:
 ssh -i ~/Documents/cluster.pem $JUMP_HOST
 ssh -i ~/.ssh/cluster.pem core@ip-n-n-n-n.ec2.internal  'rm -rf /mnt/local-storage/disk0/*'
 ```
-
+Delete the NuoDB database
 ```
 kubectl delete nuodb nuodb
 ```
