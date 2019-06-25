@@ -241,10 +241,11 @@ If you enabled NuoDB Insights (highly recommended) you can confirm it's run stat
 &ensp; `oc exec -it nuodb-insights -c insights -- nuoca check insights`
 
 # Delete the NuoDB database
+Run the following command
 ```
 kubectl delete nuodb nuodb
 ```
-Note: Delete the nuodb database finalizer by running this command, remove the finalizer, and run the final nuodb delete commmand
+Next, delete the nuodb database finalizer by running this command, remove the finalizer line under "Finalizer:", and run the final nuodb delete commmand
 ```
 kubectl edit nuodb nuodb
 kubectl delete nuodb nuodb
@@ -265,6 +266,7 @@ kubectl delete -f local-disk-class.yaml
 ```
 
 # Delete the NuoDB Operator
+Run the following commands
 
 ```
 kubectl delete configmap nuodb-lic-configmap -n $OPERATOR_NAMESPACE
@@ -280,7 +282,7 @@ kubectl delete -n $OPERATOR_NAMESPACE -f role_binding.yaml
 kubectl delete -n $OPERATOR_NAMESPACE -f service_account.yaml
 kubectl delete -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml
 ```
-Note: Delete the crd finalizer by running this command, remove the finalizer, and run the final crd delete commmand
+Next, delete the crd finalizer by running this command, remove the finalizer line after "Finalizer:", and run the final crd delete commmand
 ```
 kubectl edit crd nuodbs.nuodb.com
 kubectl delete crd nuodbs.nuodb.com
