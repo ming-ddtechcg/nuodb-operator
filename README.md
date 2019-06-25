@@ -220,7 +220,7 @@ If you enabled NuoDB Insights (highly recommended) you can confirm it's run stat
 ```
 kubectl delete -n $OPERATOR_NAMESPACE pvc --all 
 ```
-Note: Delete the NuoDB Storage Manager storage
+Note: Delete the NuoDB Storage Manager(SM) disk storage
 OpenShift 4 example: 
 ```
 ssh -i ~/Documents/cluster.pem $JUMP_HOST
