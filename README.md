@@ -45,7 +45,7 @@ export STORAGE_NODE=yourStorageNodeName
 ```
 
 ### Disable Linux Transparent Huge Pages (THP) on each cluster node
-Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers). These commands will disable THP. 
+Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers). These commands will disable THP.
 NOTE: If the nodes are rebooted THP will be reenabled by default, and the commands will need to executed again to disable THP.
 
 ```
