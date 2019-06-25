@@ -226,7 +226,7 @@ spec:
 
 ### Connect to NuoDB Insights Visual Monitoring WebUI
 
-If you optionally chose to install NuoDB Insights, you can connect to it by opening a Web browser using the following URL
+If you optionally chose to install NuoDB Insights, you can connect to NuoDB Insights by opening a Web browser using the following URL
 ```
 https://insights.nuodb.com/<YOUR SUBSCRIBER ID HERE>
 ```
