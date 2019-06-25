@@ -157,8 +157,8 @@ oc create -f role.yaml
 oc create -f role_binding.yaml
 oc create -f service_account.yaml 
 oc create -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml 
-sed 's/placeholder/$OPERATOR_NAMESPACE/' olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml
-oc create  -n $OPERATOR_NAMESPACE -f olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml
+sed "s/placeholder/$OPERATOR_NAMESPACE/" olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml > nuodb-csv.yaml
+oc create  -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
  ```
 
 # Deploy the NuoDB Database
