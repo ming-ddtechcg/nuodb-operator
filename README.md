@@ -19,6 +19,12 @@ This page is organized in the following sections:
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Deploy the NuoDB Database](#Deploy-the-NuoDB-Database)
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Remove the NuoDB Database](#Remove-the-NuoDB-Database)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Remove the NuoDB Operator](#Remove-the-NuoDB-Operator)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Optional Database Parameters](#Optional-Database-Parameters)
+
 
 # Install Prerequisites
 
@@ -266,7 +272,7 @@ Delete the NuoDB project
 kubectl delete project $OPERATOR_NAMESPACE
 ```
 
-# Option Database Parameters
+# Optional Database Parameters
 
 **storageMode** - Run NuoDB CE using a persistent, local, disk volume "persistent" or volatile storage "ephemeral". Must be set to one of those values.
 
