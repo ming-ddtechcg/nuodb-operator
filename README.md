@@ -212,19 +212,18 @@ spec:
   container: nuodb/nuodb-ce:latest
 ```
 
-### To check the status of NuoDB Insights visual monitoring tool
+### Check the status of NuoDB Insights visual monitoring tool
 If you enabled NuoDB Insights (highly recommended) you can confirm it's run status by running:
 
 &ensp; `oc exec -it nuodb-insights -c insights -- nuoca check insights`
 
-### To remove the NuoDB database deployment and NuoDB Operator
+### Remove the NuoDB database deployment and NuoDB Operator
 
 ```
 cd nuodb-operator/deploy
-oc delete -f olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml
+oc delete -f nuodb-csv.yaml
 oc delete -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml
 oc delete -f service_account.yaml
-oc delete -f local-disk-class.yaml
 oc delete -f role_binding.yaml
 oc delete -f role.yaml
 oc delete -f cluster_role_binding_nuodb-test1.yaml
@@ -233,6 +232,10 @@ oc delete -f operatorGroup.yaml
 oc delete -f catalogSource.yaml
 
 oc delete project $OPERATOR_NAMESPACE
+```
+### Remove local-disk storage class if running on-prem
+```
+oc delete -f local-disk-class.yaml
 ```
 
 ### Option Database Parameters
