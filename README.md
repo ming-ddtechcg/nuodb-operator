@@ -266,7 +266,7 @@ Delete the NuoDB project
 kubectl delete project $OPERATOR_NAMESPACE
 ```
 
-### Option Database Parameters
+## Option Database Parameters
 
 **storageMode** - Run NuoDB CE using a persistent, local, disk volume "persistent" or volatile storage "ephemeral". Must be set to one of those values.
 
