@@ -74,31 +74,31 @@ sudo chmod -R 777 /mnt/local-storage/
 sudo chcon -R unconfined_u:object_r:svirt_sandbox_file_t:s0 /mnt/local-storage
 sudo chown -R root:root /mnt/local-storage
 ```
-Create the Kubernetes storage class "local-disk" and persistent volume
+Create the storage class "local-disk" and persistent volume
 
 &ensp; `kubectl create -f nuodb-operator/deploy/local-disk-class.yaml`
 
-Set the Kubernetes storage class values in cr.yaml
+Set the storage class values in cr.yaml
 
 ```
 adminStorageClass: local-disk
 smStorageClass: local-disk
 ```
 
-#### FOR Amazon AWS: Set the Kubernetes storage class values in cr.yaml
+#### FOR Amazon AWS: Set the storage class values in cr.yaml
 
 ```
 adminStorageClass: gp2
 smStorageClass: gp2
 ```
 
-#### FOR Google GCP: Set the Kubernetes storage class values in cr.yaml 
+#### FOR Google GCP: Set the storage class values in cr.yaml 
 
 ```
 adminStorageClass: standard
 smStorageClass: standard
 ```
-#### When using 3rd container-native storage: Set the Kubernetes storage class values in cr.yaml 
+#### When using 3rd container-native storage: Set the storage class values in cr.yaml 
 
 ```
 adminStorageClass: <3rd-party storageClassName>
