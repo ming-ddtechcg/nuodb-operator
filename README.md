@@ -260,7 +260,9 @@ Note: Delete the crd finalizer by running this command, remove the finalizer, an
 ```
 kubectl edit crd nuodbs.nuodb.com
 kubectl delete crd nuodbs.nuodb.com
- 
+```
+Delete the NuoDB project
+```
 kubectl delete project $OPERATOR_NAMESPACE
 ```
 
