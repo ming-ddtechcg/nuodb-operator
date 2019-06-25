@@ -9,7 +9,7 @@ The NuoDB Community Edition (CE) feature set is rich enough to allow first time 
 * ANSI SQL
 * ACID transactions
 
-To PoC the NuoDB Enterprise Edition (EE) which also allows users to scale the Storage Manager (SM) database process, contact NuoDB Sales at sales@nuodb.com for a PoC time-based enterprise edition license.
+To trial or run a PoC of the NuoDB Enterprise Edition (EE) which also allows users to scale the Storage Manager (SM) database process, contact NuoDB Sales at sales@nuodb.com for a PoC time-based enterprise edition license.
 
 This page is organized in the following sections:
 
@@ -21,6 +21,8 @@ This page is organized in the following sections:
 
 
 # Install Prerequisites
+
+_**Note:** The instructions on this page use the Kubernetes &ensp;`kubectl` command for command portability reasons. You can replace the kubectl command with the OpenShift &ensp;`oc` command when running commands if you prefer._
 
 ### Create the "nuodb" project (if not already created)
 
@@ -43,7 +45,7 @@ export STORAGE_NODE=yourStorageNodeName
 ```
 
 ### Disable Linux Transparent Huge Pages (THP) on each cluster node
-Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers). These commands will disable THP. 
+Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers). These commands will disable THP.
 NOTE: If the nodes are rebooted THP will be reenabled by default, and the commands will need to executed again to disable THP.
 
 ```
@@ -92,8 +94,6 @@ smStorageClass: standard
 
 ### Node Labeling
 Label the nodes you want to run NuoDB pods.
-
-_**Note:** The instructions on this page use the Kubernetes &ensp;`kubectl` command for command portability reasons. You can replace the kubectl command with the OpenShift &ensp;`oc` command when running commands if you prefer._
 
 &ensp; `kubectl  label node <node name> nuodb.com/zone=a`
 
@@ -145,20 +145,19 @@ In OpenShift 4.x, the NuoDB Operator is available to install directly from the O
 ```
 kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.1/crds.yaml
 kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.1/olm.yaml
-
-Change directory into the NuoDB Operator directory
-cd nuodb-operator/deploy
-
-oc create -f catalogSource.yaml 
-oc create -f operatorGroup.yaml
-oc create -f cluster_role.yaml
-oc create -f cluster_role_binding.yaml
-oc create -f role.yaml
-oc create -f role_binding.yaml
-oc create -f service_account.yaml 
-oc create -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml 
-sed 's/placeholder/$OPERATOR_NAMESPACE/' olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml
-oc create  -n $OPERATOR_NAMESPACE -f olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml
+```
+### Run the NuoDB Operator yaml files
+```
+kubectl create -f catalogSource.yaml 
+kubectl create -f cluster_role_binding.yaml
+kubectl create -n $OPERATOR_NAMESPACE -f operatorGroup.yaml
+kubectl create -n $OPERATOR_NAMESPACE -f cluster_role.yaml
+kubectl create -n $OPERATOR_NAMESPACE -f role.yaml
+kubectl create -n $OPERATOR_NAMESPACE -f role_binding.yaml
+kubectl create -n $OPERATOR_NAMESPACE -f service_account.yaml 
+kubectl create -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml 
+sed "s/placeholder/$OPERATOR_NAMESPACE/" olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml > nuodb-csv.yaml
+kubectl create  -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
  ```
 
 # Deploy the NuoDB Database
@@ -212,30 +211,62 @@ spec:
   container: nuodb/nuodb-ce:latest
 ```
 
-### To check the status of NuoDB Insights visual monitoring tool
+### Check the status of NuoDB Insights visual monitoring tool
 If you enabled NuoDB Insights (highly recommended) you can confirm it's run status by running:
 
 &ensp; `oc exec -it nuodb-insights -c insights -- nuoca check insights`
 
-### To remove the NuoDB database deployment and NuoDB Operator
+# Remove the NuoDB database
+```
+kubectl delete -n $OPERATOR_NAMESPACE pvc --all 
+```
+Note: Delete the NuoDB Storage Manager(SM) disk storage
+OpenShift 4 example: 
+```
+ssh -i ~/Documents/cluster.pem $JUMP_HOST
+ssh -i ~/.ssh/cluster.pem core@ip-n-n-n-n.ec2.internal  'rm -rf /mnt/local-storage/disk0/*'
+```
+Delete the NuoDB database
+```
+kubectl delete nuodb nuodb
+```
+Note: Delete the nuodb database finalizer by running this command, remove the finalizer, and run the final nuodb delete commmand
+```
+kubectl edit nuodb nuodb
+kubectl delete nuodb nuodb
+```
+### Remove local-disk storage class (if running on-prem)
+```
+kubectl delete -f local-disk-class.yaml
+```
+
+# Remove the NuoDB Operator
 
 ```
+kubectl delete configmap nuodb-lic-configmap -n $OPERATOR_NAMESPACE
+
 cd nuodb-operator/deploy
-oc delete -f olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml
-oc delete -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml
-oc delete -f service_account.yaml
-oc delete -f local-disk-class.yaml
-oc delete -f role_binding.yaml
-oc delete -f role.yaml
-oc delete -f cluster_role_binding_nuodb-test1.yaml
-oc delete -f cluster_role.yaml
-oc delete -f operatorGroup.yaml
-oc delete -f catalogSource.yaml
-
-oc delete project $OPERATOR_NAMESPACE
+kubectl delete -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
+kubectl delete -f catalogSource.yaml
+kubectl delete -f cluster_role_binding.yaml
+kubectl delete -n $OPERATOR_NAMESPACE -f operatorGroup.yaml
+kubectl delete -n $OPERATOR_NAMESPACE -f cluster_role.yaml
+kubectl delete -n $OPERATOR_NAMESPACE -f role.yaml
+kubectl delete -n $OPERATOR_NAMESPACE -f role_binding.yaml
+kubectl delete -n $OPERATOR_NAMESPACE -f service_account.yaml
+kubectl delete -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml
+```
+Note: Delete the crd finalizer by running this command, remove the finalizer, and run the final crd delete commmand
+```
+kubectl edit crd nuodbs.nuodb.com
+kubectl delete crd nuodbs.nuodb.com
+```
+Delete the NuoDB project
+```
+kubectl delete project $OPERATOR_NAMESPACE
 ```
 
-### Option Database Parameters
+# Option Database Parameters
 
 **storageMode** - Run NuoDB CE using a persistent, local, disk volume "persistent" or volatile storage "ephemeral". Must be set to one of those values.
 
