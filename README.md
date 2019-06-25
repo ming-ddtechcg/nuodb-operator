@@ -216,7 +216,25 @@ If you enabled NuoDB Insights (highly recommended) you can confirm it's run stat
 
 &ensp; `oc exec -it nuodb-insights -c insights -- nuoca check insights`
 
-### Remove the NuoDB database deployment and NuoDB Operator
+# Remove the NuoDB database
+```
+kubectl delete -n $OPERATOR_NAMESPACE pvc --all 
+Note: Delete the NuoDB Storage Manager storage
+OpenShift 4 example: 
+ssh -i ~/Documents/cluster.pem $JUMP_HOST
+ssh  -i ~/.ssh/cluster.pem core@ip-n-n-n-n.ec2.internal  'rm -rf /mnt/local-storage/disk0/*'
+
+kubectl delete nuodb nuodb
+Note: Delete the nuodb database finalizer by running this command, remove the finalizer, and run the final nuodb delete commmand
+kubectl edit nuodb nuodb
+kubectl delete nuodb nuodb
+```
+### Remove local-disk storage class (if running on-prem)
+```
+kubectl delete -f local-disk-class.yaml
+```
+
+# Remove the NuoDB Operator
 
 ```
 kubectl delete configmap nuodb-lic-configmap -n $OPERATOR_NAMESPACE
@@ -232,14 +250,11 @@ kubectl delete -n $OPERATOR_NAMESPACE -f role_binding.yaml
 kubectl delete -n $OPERATOR_NAMESPACE -f service_account.yaml
 kubectl delete -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml
 
-Note: Delete the crd finalizer by running this command and remove the finalizer
+Note: Delete the crd finalizer by running this command, remove the finalizer, and run the final crd delete commmand
+kubectl edit crd nuodbs.nuodb.com
 kubectl delete crd nuodbs.nuodb.com
-
+ 
 kubectl delete project $OPERATOR_NAMESPACE
-```
-### Remove local-disk storage class if running on-prem
-```
-kubectl delete -f local-disk-class.yaml
 ```
 
 ### Option Database Parameters
