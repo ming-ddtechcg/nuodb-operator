@@ -32,7 +32,7 @@ _**Note:** The instructions on this page use the Kubernetes &ensp;`kubectl` comm
 
 ### Create the "nuodb" project (if not already created)
 
-&ensp; `kubectl new-project nuodb`
+&ensp; `kubectl create namespace nuodb`
 
 ### Clone a copy of the NuoDB Operator from Github
 In your home or working directory, run:
