@@ -98,7 +98,7 @@ smStorageClass: gp2
 adminStorageClass: standard
 smStorageClass: standard
 ```
-#### When using 3rd container-native storage(e.g. OpenEBS,LinStor,Portworx,etc.): Set the storage class values in cr.yaml 
+#### When using 3rd-party container-native storage(e.g. OpenEBS,LinStor,Portworx,etc.): Set the storage class values in cr.yaml 
 
 ```
 adminStorageClass: <3rd-party storageClassName>
