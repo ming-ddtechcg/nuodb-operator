@@ -98,7 +98,7 @@ smStorageClass: gp2
 adminStorageClass: standard
 smStorageClass: standard
 ```
-#### When using 3rd container-native storage: Set the storage class values in cr.yaml 
+#### When using 3rd container-native storage(e.g. OpenEBS,LinStor,Portworx,etc.): Set the storage class values in cr.yaml 
 
 ```
 adminStorageClass: <3rd-party storageClassName>
@@ -228,11 +228,11 @@ spec:
 
 If you optionally chose to install NuoDB Insights, you can connect to NuoDB Insights by opening a Web browser using the following URL
 ```
-https://insights.nuodb.com/<YOUR SUBSCRIBER ID HERE>
+https://insights.nuodb.com/yourSubID#
 ```
 You can find your SubcriberID by locating the "nuodb-insights" pod, go to the Logs tab, and find the line that indicates your Subscriber ID
 ```
-Insights Subscriber ID: <yourIDHere>
+Insights Subscriber ID: yourSubID#
 ```
 
 ### Check the status of NuoDB Insights visual monitoring tool
