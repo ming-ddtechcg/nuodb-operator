@@ -19,14 +19,20 @@ This page is organized in the following sections:
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Deploy the NuoDB Database](#Deploy-the-NuoDB-Database)
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Delete the NuoDB Database](#Delete-the-NuoDB-Database)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Delete the NuoDB Operator](#Delete-the-NuoDB-Operator)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Optional Database Parameters](#Optional-Database-Parameters)
+
 
 # Install Prerequisites
 
-_**Note:** The instructions on this page use the Kubernetes &ensp;`kubectl` command for command portability reasons. You can replace the kubectl command with the OpenShift &ensp;`oc` command when running commands if you prefer._
+_**Note:** The instructions on this page use the Kubernetes&ensp;`kubectl` command for command portability reasons. You can replace the kubectl command with the OpenShift&ensp;`oc` command when running commands if you prefer._
 
 ### Create the "nuodb" project (if not already created)
 
-&ensp; `kubectl new-project nuodb`
+&ensp; `kubectl create namespace nuodb`
 
 ### Clone a copy of the NuoDB Operator from Github
 In your home or working directory, run:
@@ -41,11 +47,12 @@ In your home or working directory, run:
 
 ```
 export OPERATOR_NAMESPACE=nuodb
-export STORAGE_NODE=yourStorageNodeName
+export STORAGE_NODE=yourStorageNodeDNSName
 ```
 
 ### Disable Linux Transparent Huge Pages (THP) on each cluster node
 Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers). These commands will disable THP.
+
 NOTE: If the nodes are rebooted THP will be reenabled by default, and the commands will need to executed again to disable THP.
 
 ```
@@ -67,41 +74,58 @@ sudo chmod -R 777 /mnt/local-storage/
 sudo chcon -R unconfined_u:object_r:svirt_sandbox_file_t:s0 /mnt/local-storage
 sudo chown -R root:root /mnt/local-storage
 ```
-Create the Kubernetes storage class "local-disk" and persistent volume
+Create the storage class "local-disk" and persistent volume
 
 &ensp; `kubectl create -f nuodb-operator/deploy/local-disk-class.yaml`
 
-Set the Kubernetes storage class to use in cr.yaml
+Set the storage class values in cr.yaml
 
 ```
 adminStorageClass: local-disk
 smStorageClass: local-disk
 ```
 
-#### FOR Amazon AWS: Set the Kubernetes storage class to use in cr.yaml
+#### FOR Amazon AWS: Set the storage class values in cr.yaml
 
 ```
 adminStorageClass: gp2
 smStorageClass: gp2
 ```
 
-#### FOR Google GCP: Set the Kubernetes storage class to use in cr.yaml 
+#### FOR Google GCP: Set the storage class values in cr.yaml 
 
 ```
 adminStorageClass: standard
 smStorageClass: standard
 ```
+#### When using 3rd-party container-native storage(e.g. OpenEBS,LinStor,Portworx,etc.): Set the storage class values in cr.yaml 
 
-### Node Labeling
-Label the nodes you want to run NuoDB pods.
+```
+adminStorageClass: <3rd-party storageClassName>
+smStorageClass: <3rd-party storageClassName>
+```
 
-&ensp; `kubectl  label node <node name> nuodb.com/zone=a`
+### Cluster Node Labeling
+Label the cluster nodes you want to run NuoDB pods.
 
-_**Note:** The label value, in this example "a", can be any value._
+&ensp; `kubectl  label node <node name> nuodb.com/zone=nuodb`
+
+_**Note:** The label value, in this example "nuodb", can be any value._
 
 Next, label one of these nodes as your storage node. This is the node that will host your NouDB Storage Manager (SM) pod and is where you database persistent storage will reside. Ensure there is sufficient disk space. To create this label run:
 
 &ensp; `kubectl  label node $STORAGE_NODE nuodb.com/node-type=storage`
+
+Once your cluster nodes are labeled for NuoDB use, run the following&ensp; `kubectl get nodes` command to confirm nodes are labeled prperly. The display output should look similar to the below
+```
+kubectl get nodes -l nuodb.com/zone -L nuodb.com/zone,nuodb.com/node-type
+NAME                           STATUS   ROLES    AGE   VERSION             ZONE    NODE-TYPE
+ip-10-0-141-113.ec2.internal   Ready    worker   15d   v1.13.4+cb455d664   nuodb   storage
+ip-10-0-152-147.ec2.internal   Ready    worker   15d   v1.13.4+cb455d664   nuodb   
+ip-10-0-162-73.ec2.internal    Ready    worker   15d   v1.13.4+cb455d664   nuodb   
+ip-10-0-184-233.ec2.internal   Ready    worker   15d   v1.13.4+cb455d664   nuodb   
+ip-10-0-206-8.ec2.internal     Ready    worker   15d   v1.13.4+cb455d664   nuodb 
+```
 
 ### Create the NuoDB Community Edition (CE) license file
 
@@ -148,6 +172,7 @@ kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manage
 ```
 ### Run the NuoDB Operator yaml files
 ```
+cd nuodb-operator/deploy
 kubectl create -f catalogSource.yaml 
 kubectl create -f cluster_role_binding.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f operatorGroup.yaml
@@ -159,19 +184,18 @@ kubectl create -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml
 sed "s/placeholder/$OPERATOR_NAMESPACE/" olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml > nuodb-csv.yaml
 kubectl create  -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
  ```
+Once you have completed these steps, verify the NuoDB Operator running in OpenShift project. 
 
 # Deploy the NuoDB Database
-To deploy the NuoDB database into your Kubernetes cluster, run the following command:
+To deploy the NuoDB database into your Kubernetes cluster, make a copy of the nuodb-operator/deploy/cr.yaml file. In your new file,  review the configuration parameter values, make any configuration changes you prefer, and run the following command to create your NuoDB database:
 
  ```
-kubectl create -n $OPERATOR_NAMESPACE -f deploy/cr.yaml
+kubectl create -n $OPERATOR_NAMESPACE -f cr.yaml
  ```
-
-_**Note:** Before running the above create Custom Resource file command, this is where you have the option to configure your database just the way you want it._
 
 ### Sample cr.yaml deployment files
 
-The deploy directory includes sample Custom Resources to deploy NuoDB:
+The nuodb-operator/deploy directory includes sample Custom Resources to deploy NuoDB:
 
 &ensp; `cr-ephemeral.yaml` deploys NuoDB CE domain without a persistent storage volume by setting storageMode to "ephemeral".
 
@@ -211,36 +235,49 @@ spec:
   container: nuodb/nuodb-ce:latest
 ```
 
+### Connect to NuoDB Insights Visual Monitoring WebUI
+
+If you optionally chose to install NuoDB Insights, you can find your NuoDB Insights SubcriberID by locating the "nuodb-insights" pod, go to the Logs tab, and find the line that indicates your Subscriber ID
+```
+Insights Subscriber ID: yourSubID#
+```
+To connect to NuoDB Insights, open a Web browser using the following URL
+```
+https://insights.nuodb.com/yourSubID#
+```
+
 ### Check the status of NuoDB Insights visual monitoring tool
 If you enabled NuoDB Insights (highly recommended) you can confirm it's run status by running:
 
 &ensp; `oc exec -it nuodb-insights -c insights -- nuoca check insights`
 
-# Remove the NuoDB database
-```
-kubectl delete -n $OPERATOR_NAMESPACE pvc --all 
-```
-Note: Delete the NuoDB Storage Manager(SM) disk storage
-OpenShift 4 example: 
-```
-ssh -i ~/Documents/cluster.pem $JUMP_HOST
-ssh -i ~/.ssh/cluster.pem core@ip-n-n-n-n.ec2.internal  'rm -rf /mnt/local-storage/disk0/*'
-```
-Delete the NuoDB database
+# Delete the NuoDB database
+Run the following command
 ```
 kubectl delete nuodb nuodb
 ```
-Note: Delete the nuodb database finalizer by running this command, remove the finalizer, and run the final nuodb delete commmand
+Next, delete the nuodb database finalizer by running this command, remove the finalizer line under "Finalizer:", and run the final nuodb delete commmand
 ```
 kubectl edit nuodb nuodb
 kubectl delete nuodb nuodb
 ```
-### Remove local-disk storage class (if running on-prem)
+Delete the NuoDB persistent storage volumes claims
+```
+kubectl delete -n $OPERATOR_NAMESPACE pvc --all 
+```
+Delete the NuoDB Storage Manager(SM) disk storage (see following OpenShift 4 example): 
+```
+ssh -i ~/Documents/cluster.pem $JUMP_HOST
+ssh -i ~/.ssh/cluster.pem core@ip-n-n-n-n.ec2.internal  'rm -rf /mnt/local-storage/disk0/*'
+```
+
+Delete local-disk storage class (if the local-disk storage class was used)
 ```
 kubectl delete -f local-disk-class.yaml
 ```
 
-# Remove the NuoDB Operator
+# Delete the NuoDB Operator
+Run the following commands
 
 ```
 kubectl delete configmap nuodb-lic-configmap -n $OPERATOR_NAMESPACE
@@ -256,7 +293,7 @@ kubectl delete -n $OPERATOR_NAMESPACE -f role_binding.yaml
 kubectl delete -n $OPERATOR_NAMESPACE -f service_account.yaml
 kubectl delete -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml
 ```
-Note: Delete the crd finalizer by running this command, remove the finalizer, and run the final crd delete commmand
+Next, delete the crd finalizer by running this command, remove the finalizer line after "Finalizer:", and run the final crd delete commmand
 ```
 kubectl edit crd nuodbs.nuodb.com
 kubectl delete crd nuodbs.nuodb.com
@@ -266,7 +303,7 @@ Delete the NuoDB project
 kubectl delete project $OPERATOR_NAMESPACE
 ```
 
-# Option Database Parameters
+# Optional Database Parameters
 
 **storageMode** - Run NuoDB CE using a persistent, local, disk volume "persistent" or volatile storage "ephemeral". Must be set to one of those values.
 
