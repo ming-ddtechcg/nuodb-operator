@@ -105,8 +105,8 @@ adminStorageClass: <3rd-party storageClassName>
 smStorageClass: <3rd-party storageClassName>
 ```
 
-### Node Labeling
-Label the nodes you want to run NuoDB pods.
+### Cluster Node Labeling
+Label the cluster nodes you want to run NuoDB pods.
 
 &ensp; `kubectl  label node <node name> nuodb.com/zone=nuodb`
 
@@ -115,6 +115,17 @@ _**Note:** The label value, in this example "nuodb", can be any value._
 Next, label one of these nodes as your storage node. This is the node that will host your NouDB Storage Manager (SM) pod and is where you database persistent storage will reside. Ensure there is sufficient disk space. To create this label run:
 
 &ensp; `kubectl  label node $STORAGE_NODE nuodb.com/node-type=storage`
+
+Once your cluster nodes are labeled for NuoDB use, run the following command to confirm nodes are labeled prperly. The display output should look similar to the below
+```
+kubectl get nodes -l nuodb.com/zone -L nuodb.com/zone,nuodb.com/node-type
+NAME                           STATUS   ROLES    AGE   VERSION             ZONE    NODE-TYPE
+ip-10-0-141-113.ec2.internal   Ready    worker   15d   v1.13.4+cb455d664   nuodb   storage
+ip-10-0-152-147.ec2.internal   Ready    worker   15d   v1.13.4+cb455d664   nuodb   
+ip-10-0-162-73.ec2.internal    Ready    worker   15d   v1.13.4+cb455d664   nuodb   
+ip-10-0-184-233.ec2.internal   Ready    worker   15d   v1.13.4+cb455d664   nuodb   
+ip-10-0-206-8.ec2.internal     Ready    worker   15d   v1.13.4+cb455d664   nuodb 
+```
 
 ### Create the NuoDB Community Edition (CE) license file
 
@@ -226,13 +237,13 @@ spec:
 
 ### Connect to NuoDB Insights Visual Monitoring WebUI
 
-If you optionally chose to install NuoDB Insights, you can connect to NuoDB Insights by opening a Web browser using the following URL
-```
-https://insights.nuodb.com/yourSubID#
-```
-You can find your SubcriberID by locating the "nuodb-insights" pod, go to the Logs tab, and find the line that indicates your Subscriber ID
+If you optionally chose to install NuoDB Insights, you can find your NuoDB Insights SubcriberID by locating the "nuodb-insights" pod, go to the Logs tab, and find the line that indicates your Subscriber ID
 ```
 Insights Subscriber ID: yourSubID#
+```
+To connect to NuoDB Insights, open a Web browser using the following URL
+```
+https://insights.nuodb.com/yourSubID#
 ```
 
 ### Check the status of NuoDB Insights visual monitoring tool
