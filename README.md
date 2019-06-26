@@ -116,7 +116,7 @@ Next, label one of these nodes as your storage node. This is the node that will 
 
 &ensp; `kubectl  label node $STORAGE_NODE nuodb.com/node-type=storage`
 
-Once your cluster nodes are labeled for NuoDB use, run the following command to confirm nodes are labeled prperly. The display output should look similar to the below
+Once your cluster nodes are labeled for NuoDB use, run the following &ensp; `kubectl get nodes` command to confirm nodes are labeled prperly. The display output should look similar to the below
 ```
 kubectl get nodes -l nuodb.com/zone -L nuodb.com/zone,nuodb.com/node-type
 NAME                           STATUS   ROLES    AGE   VERSION             ZONE    NODE-TYPE
