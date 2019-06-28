@@ -21,11 +21,14 @@ This page is organized in the following sections:
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Deploy the NuoDB Insights Visual Monitor](#Deploy-the-NuoDB-Insights-Visual-Monitor)
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Launch a Sample SQL Workload](#Lauch-a-Sample-SQL-Workload)
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Delete the NuoDB Database](#Delete-the-NuoDB-Database)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Delete the NuoDB Operator](#Delete-the-NuoDB-Operator)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Optional Database Parameters](#Optional-Database-Parameters)
+
 
 
 # Install Prerequisites
@@ -145,6 +148,7 @@ kubectl  create secret docker-registry pull-secret \
    --docker-email='yourEmailAddr'  --docker-server='registry.connect.redhat.com'
  ```
 
+
 # Install the NuoDB Operator
 
 To install the NuoDB Operator into your Kubernetes cluster, follow the steps indicated for the OpenShift version you are using.
@@ -188,8 +192,9 @@ kubectl create  -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
  ```
 Once you have completed these steps, verify the NuoDB Operator running in OpenShift project. 
 
+
 # Deploy the NuoDB Database
-To deploy the NuoDB database into your Kubernetes cluster, make a copy of the nuodb-operator/deploy/cr.yaml file. In your new file,  review the configuration parameter values, make any configuration changes you prefer, and run the following command to create your NuoDB database:
+To deploy the NuoDB database into your Kubernetes cluster, make a copy of the nuodb-operator/deploy/cr.yaml file. In your new file,  review the configuration parameter values, make any configuration changes you prefer, and run the following command to create your NuoDB database. To configure a sample SQL workload review and set the YCSB parameters. 
 
  ```
 kubectl create -n $OPERATOR_NAMESPACE -f cr.yaml
@@ -237,7 +242,8 @@ spec:
   container: nuodb/nuodb-ce:latest
 ```
 
-## Deploy the NuoDB Insights Visual Monitor
+
+# Deploy the NuoDB Insights Visual Monitor
 
 If you optionally chose to install NuoDB Insights, you can find your NuoDB Insights SubcriberID by locating the "nuodb-insights" pod, go to the Logs tab, and find the line that indicates your Subscriber ID
 ```
@@ -252,6 +258,14 @@ https://insights.nuodb.com/yourSubID#
 If you enabled NuoDB Insights (highly recommended) you can confirm it's run status by running:
 
 &ensp; `oc exec -it nuodb-insights -c insights -- nuoca check insights`
+
+
+# Launch a Sample SQL Workload
+
+The NuoDB Operator includes a sample SQL appplication that will allow you to get started quickly running SQL statements against your NuoDB database. The sample workload uses YCSB (the Yahoo Cloud Servicing Benchmark). The cr.yaml includes YCSB parameters that will allow you to configure the SQL workload to your preferences.
+
+To start a SQL Workload, locate the ycsb Replication Controller in OpenShift and scale it to your desired number of pods to create your desired SQL application workload. Once the YCSB application is running the resulting SQL workload will be viewable from the NuoDB Insights visual monitoring WebUI.
+
 
 # Delete the NuoDB database
 Run the following command
@@ -277,6 +291,7 @@ Delete local-disk storage class (if the local-disk storage class was used)
 ```
 kubectl delete -f local-disk-class.yaml
 ```
+
 
 # Delete the NuoDB Operator
 Run the following commands
@@ -304,6 +319,7 @@ Delete the NuoDB project
 ```
 kubectl delete project $OPERATOR_NAMESPACE
 ```
+
 
 # Optional Database Parameters
 
