@@ -1,7 +1,7 @@
 # The NuoDB Operator
 The NuoDB Kubernetes Operator deploys the NuoDB Community Edition (CE) database on OpenShift 3.11 or 4. It also supports either ephemeral or persistent storage options with configurations to run NuoDB Insights, a visual database monitoring Web UI, and start a sample SQL application (ycsb) to quickly generate a user-configurable SQL workload against the database.
 
-# About the NuoDB Community Edition
+## About the NuoDB Community Edition
 The NuoDB Community Edition (CE) is a full featured version of NuoDB but limited to one Storage Manager (SM) and three Transaction Engine (TE) processes. The Community Edition is free of charge and allows you to self-evaluate NuoDB at your own pace. The NuoDB Community Edition (CE) will allow first time users to experience all the benefits and value points of NuoDB including: 
 
 * Ease of scale-out to meet changing application throughput requirements
@@ -12,7 +12,7 @@ The NuoDB Community Edition (CE) is a full featured version of NuoDB but limited
 
 To trial or run a PoC of the NuoDB Enterprise Edition (EE) which also allows users to scale the Storage Manager (SM) database process, contact NuoDB Sales at sales@nuodb.com for a PoC time-based enterprise edition license. For more information about NuoDB, see: https://www.nuodb.com
 
-# NuoDB Operator Page Outline
+## NuoDB Operator Page Outline
 This page is organized in the following sections:
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Install Prerequisites](#Install-Prerequisites)
@@ -33,7 +33,7 @@ This page is organized in the following sections:
 
 
 
-# Install Prerequisites
+## Install Prerequisites
 
 _**Note:** The instructions on this page use the Kubernetes&ensp;`kubectl` command for command portability reasons. You can replace the kubectl command with the OpenShift&ensp;`oc` command when running commands if you prefer._
 
@@ -151,11 +151,11 @@ kubectl  create secret docker-registry pull-secret \
  ```
 
 
-# Install the NuoDB Operator
+## Install the NuoDB Operator
 
 To install the NuoDB Operator into your Kubernetes cluster, follow the steps indicated for the OpenShift version you are using.
 
-## OpenShift 4
+### OpenShift 4
 
 In OpenShift 4.x, the NuoDB Operator is available to install directly from the OpenShift OperatorHub, an integrated service catalog, accessible from within the OpenShift 4 Web UI which creates a seamless - single click experience - that allows users to install the NuoDB Operator from catalog-to-cluster in seconds.
 
@@ -173,14 +173,14 @@ In OpenShift 4.x, the NuoDB Operator is available to install directly from the O
    toolbar. The STATUS column should show "Install Succeeded".
 8. Select &ensp;`Status` under the &ensp;`Projects` on the left toolbar to view your running Operator.
 
-## OpenShift 3.11 
+### OpenShift 3.11 
 
-### Install the Operator Lifecycle Manager (OLM)
+#### Install the Operator Lifecycle Manager (OLM)
 ```
 kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.1/crds.yaml
 kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.1/olm.yaml
 ```
-### Run the NuoDB Operator yaml files
+#### Run the NuoDB Operator yaml files
 ```
 cd nuodb-operator/deploy
 kubectl create -f catalogSource.yaml 
@@ -197,7 +197,7 @@ kubectl create  -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
 Once you have completed these steps, verify the NuoDB Operator running in OpenShift project. 
 
 
-# Deploy the NuoDB Database
+## Deploy the NuoDB Database
 To deploy the NuoDB database into your Kubernetes cluster, make a copy of the nuodb-operator/deploy/cr.yaml file. In your new file,  review the configuration parameter values, make any configuration changes you prefer, and run the following command to create your NuoDB database. To configure a sample SQL workload review and set the YCSB parameters. 
 
  ```
@@ -287,14 +287,14 @@ If you enabled NuoDB Insights (highly recommended) you can confirm it's run stat
 &ensp; `oc exec -it nuodb-insights -c insights -- nuoca check insights`
 
 
-# Launch a Sample SQL Workload
+## Launch a Sample SQL Workload
 
 The NuoDB Operator includes a sample SQL appplication that will allow you to get started quickly running SQL statements against your NuoDB database. The sample workload uses YCSB (the Yahoo Cloud Servicing Benchmark). The cr.yaml includes YCSB parameters that will allow you to configure the SQL workload to your preferences.
 
 To start a SQL Workload, locate the ycsb Replication Controller in OpenShift and scale it to your desired number of pods to create your desired SQL application workload. Once the YCSB application is running the resulting SQL workload will be viewable from the NuoDB Insights visual monitoring WebUI.
 
 
-# Delete the NuoDB database
+## Delete the NuoDB database
 Run the following command
 ```
 kubectl delete nuodb nuodb
@@ -319,7 +319,7 @@ kubectl delete -f local-disk-class.yaml
 ```
 
 
-# Delete the NuoDB Operator
+## Delete the NuoDB Operator
 
 ### OpenShift 4
 From the OpenShift WebUI, locate the OperatorHub under the Catalog left-bar selection. Select the NuoDB Operator and click the Uninstall button.
@@ -352,7 +352,7 @@ kubectl delete project $OPERATOR_NAMESPACE
 ```
 
 
-# Optional Database Parameters
+## Optional Database Parameters
 
 **storageMode** - Run NuoDB CE using a persistent, local, disk volume "persistent" or volatile storage "ephemeral". Must be set to one of those values.
 
