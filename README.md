@@ -246,9 +246,9 @@ spec:
   container: nuodb/nuodb-ce:latest
 ```
 
-## Deploy the NuoDB Insights Visual Monitor
+### Deploy the NuoDB Insights Visual Monitor
 
-Optionally deploy the NuoDB Insights visual monitoring tool (recommended). Insights is a powerful database monitoring tool that can greatly aid in visualizing database workload and resource consumption. For more information about the benefits of Insights, please refer to:
+Optionally deploy the NuoDB Insights visual monitoring tool **(recommended)**. Insights is a powerful database monitoring tool that can greatly aid in visualizing database workload and resource consumption. For more information about the benefits of Insights, please refer to:
         https://www.nuodb.com/product/insights
 
 > Insights is also part of NuoDB Services and Support in order to service our customers better and more efficently and is
