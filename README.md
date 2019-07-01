@@ -308,14 +308,13 @@ Delete the NuoDB persistent storage volumes claims
 ```
 kubectl delete -n $OPERATOR_NAMESPACE pvc --all 
 ```
-Delete the NuoDB Storage Manager(SM) disk storage (see following OpenShift 4 example): 
+Delete the NuoDB Storage Manager(SM) disk storage (if the local-disk storage class was used)
+See following OpenShift 4 example: 
 ```
 ssh -i ~/Documents/cluster.pem $JUMP_HOST
 ssh -i ~/.ssh/cluster.pem core@ip-n-n-n-n.ec2.internal  'rm -rf /mnt/local-storage/disk0/*'
-```
 
-Delete local-disk storage class (if the local-disk storage class was used)
-```
+# Delete local-disk storage class 
 kubectl delete -f local-disk-class.yaml
 ```
 
@@ -324,7 +323,7 @@ kubectl delete -f local-disk-class.yaml
 Run the following commands
 
 ```
-kubectl delete configmap nuodb-lic-configmap -n $OPERATOR_NAMESPACE
+kubectl delete -n $OPERATOR_NAMESPACE configmap nuodb-lic-configmap
 
 cd nuodb-operator/deploy
 kubectl delete -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
