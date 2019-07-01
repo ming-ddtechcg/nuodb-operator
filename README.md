@@ -273,7 +273,7 @@ Insights is a powerful visual database monitoring tool that can greatly aid in v
       *insightsEnabled* to "Opt In" and enable NuoDB Insights. Any other value than "true"
       results in Opting out. Insights can also be enabled at a later time if you choose.
 
-If you optionally choose to install NuoDB Insights, you can find your NuoDB Insights SubcriberID by locating the "nuodb-insights" pod, go to the Logs tab, and find the line that indicates your Subscriber ID
+After deploying your NuoDB database, if you optionally chose to install NuoDB Insights, you can find your NuoDB Insights SubcriberID by locating the "nuodb-insights" pod, go to the Logs tab, and find the line that indicates your Subscriber ID
 ```
 Insights Subscriber ID: yourSubID#
 ```
