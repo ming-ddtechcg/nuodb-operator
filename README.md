@@ -1,7 +1,8 @@
 # The NuoDB Operator
 The NuoDB Kubernetes Operator deploys the NuoDB Community Edition (CE) database on OpenShift 3.11 or 4. It also supports either ephemeral or persistent storage options with configurations to run NuoDB Insights, a visual database monitoring Web UI, and start a sample SQL application (ycsb) to quickly generate a user-configurable SQL workload against the database.
 
-The NuoDB Community Edition (CE) feature set is rich enough to allow first time users to experience all the benefits and value points of NuoDB including: 
+# About the NuoDB Community Edition
+The NuoDB Community Edition (CE) is a full featured version of NuoDB but limited to one Storage Manager (SM) and three Transaction Engine (TE) processes. The Community Edition is free of charge and allows you to self-evaluate NuoDB at your own pace. The NuoDB Community Edition (CE) will allow first time users to experience all the benefits and value points of NuoDB including: 
 
 * Ease of scale-out to meet changing application throughput requirements
 * Continuous availability even in the event of common network, hardware, and software failures
@@ -9,8 +10,9 @@ The NuoDB Community Edition (CE) feature set is rich enough to allow first time 
 * ANSI SQL
 * ACID transactions
 
-To trial or run a PoC of the NuoDB Enterprise Edition (EE) which also allows users to scale the Storage Manager (SM) database process, contact NuoDB Sales at sales@nuodb.com for a PoC time-based enterprise edition license.
+To trial or run a PoC of the NuoDB Enterprise Edition (EE) which also allows users to scale the Storage Manager (SM) database process, contact NuoDB Sales at sales@nuodb.com for a PoC time-based enterprise edition license. For more information about NuoDB, see: https://www.nuodb.com
 
+# NuoDB Operator Page Outline
 This page is organized in the following sections:
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Install Prerequisites](#Install-Prerequisites)
@@ -35,43 +37,43 @@ This page is organized in the following sections:
 
 _**Note:** The instructions on this page use the Kubernetes&ensp;`kubectl` command for command portability reasons. You can replace the kubectl command with the OpenShift&ensp;`oc` command when running commands if you prefer._
 
-### Create the "nuodb" project (if not already created)
+### 1. Create the "nuodb" project (if not already created)
 
 &ensp; `kubectl create namespace nuodb`
 
-### Clone a copy of the NuoDB Operator from Github
+### 2. Clone a copy of the NuoDB Operator from Github
 In your home or working directory, run:
 
 &ensp; `git clone https://github.com/nuodb/nuodb-operator`
 
-### Log into your Kubernetes cluster
+### 3. Log into your Kubernetes cluster
 
 &ensp; `Example: kubectl login -u system:admin`
 
-### Create environment variables
+### 4. Create environment variables
 
 ```
 export OPERATOR_NAMESPACE=nuodb
 export STORAGE_NODE=yourStorageNodeDNSName
 ```
 
-### Disable Linux Transparent Huge Pages (THP) on each cluster node
+### 5. Disable Linux Transparent Huge Pages (THP) on each cluster node
 Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers). These commands will disable THP.
 
-NOTE: If the nodes are rebooted THP will be reenabled by default, and the commands will need to executed again to disable THP.
+**Note:** If the nodes are rebooted THP will be reenabled by default, and the commands will need to executed again to disable THP.
 
 ```
 echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/enabled
 echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/defrag
 ```
 
-### Set container storage pre-requisites
+### 6. Set container storage pre-requisites
 
 Red hat GlusterFS storage is the default storage class for both NuoDB Admin and Storage Manager (SM) pods. 
 If you would like to change the default, please see below: 
 
 #### FOR ON-PREM: Set container local-storage permissions on each cluster node
-NOTE: When using the local disk storage option only 1 Admin pod is supported.
+**Note:** When using the local disk storage option only 1 Admin pod is supported.
 
 ```
 sudo mkdir -p /mnt/local-storage/disk0
@@ -110,7 +112,7 @@ adminStorageClass: <3rd-party storageClassName>
 smStorageClass: <3rd-party storageClassName>
 ```
 
-### Cluster Node Labeling
+### 7. Cluster Node Labeling
 Label the cluster nodes you want to run NuoDB pods.
 
 &ensp; `kubectl  label node <node name> nuodb.com/zone=nuodb`
@@ -132,12 +134,12 @@ ip-10-0-184-233.ec2.internal   Ready    worker   15d   v1.13.4+cb455d664   nuodb
 ip-10-0-206-8.ec2.internal     Ready    worker   15d   v1.13.4+cb455d664   nuodb 
 ```
 
-### Create the NuoDB Community Edition (CE) license file
+### 8. Create the NuoDB Community Edition (CE) license file
 
 &ensp; `kubectl create configmap nuodb-lic-configmap -n $OPERATOR_NAMESPACE --from-literal=nuodb.lic=""`
 
-### Create the Kubernetes image pull secret to access the Red Hat Container Catalog (RHCC).
-NOTE: If using Quay.io to pull the NuoDB Operator image, a secret is not required because the NuoDB Quay.io repository is public.
+### 9. Create the Kubernetes image pull secret to access the Red Hat Container Catalog (RHCC).
+**Note:** If using Quay.io to pull the NuoDB Operator image, a secret is not required because the NuoDB Quay.io repository is public.
 
 This secret will be used to pull the NuoDB Operator and NuoDB container images from the  Red Hat Container
 Catalog (RHCC). Enter your Red Hat login credentials for the --docker-username and --docker-password values.
@@ -162,7 +164,9 @@ In OpenShift 4.x, the NuoDB Operator is available to install directly from the O
 2. Select the &ensp;`OperatorHub` under the &ensp;`Catalog` section in the OCP 4 left toolbar.
 3. Select the &ensp;`Database` filter and scroll down to the NuoDB Application tile and click the tile.
 4. In the right-hand corner of the NuoDB Operator page, click the &ensp;`Install` button.
-5. On the "Create Operator Subscription" page, select &ensp;`Subscribe` to subscribe to the NuoDB Operator.
+5. On the "Create Operator Subscription" page, select the radio group option "A specific namespace on the cluster"
+   and enter the project/namespace in the pull-down field that you would like to install the NuoDB Operator,
+   then select &ensp;`Subscribe` to subscribe to the NuoDB Operator.
 6. In less than a minute, on the page that displays should indicate the NuoDB Operator has been
    installed, see "1 installed" message.
 7. To verify the NuoDB Operator installed correctly, select &ensp;`Installed Operators` from the left
@@ -245,7 +249,31 @@ spec:
 
 # Deploy the NuoDB Insights Visual Monitor
 
-If you optionally chose to install NuoDB Insights, you can find your NuoDB Insights SubcriberID by locating the "nuodb-insights" pod, go to the Logs tab, and find the line that indicates your Subscriber ID
+Insights is a powerful visual database monitoring tool that can greatly aid in visualizing database workload and resource consumption. For more information about the benefits of Insights, please refer to:
+        https://www.nuodb.com/product/insights
+
+Insights is also part of NuoDB Services and Support in order to service our customers better and more efficently and is
+      subject to our Terms of Use and Privacy Policy.
+      Terms of Use and Privacy Policy
+        https://www.nuodb.com/privacy-policy
+        https://www.nuodb.com/terms-use
+      Insights collects anonymized data about your NuoDB implementation, and use,
+      including system information, configuration, response times, load averages,
+      usage statistics, and user activity logs ("Usage Information").  Usage
+      Information does not include any personally identifiable information ("PII"),
+      but may include some aggregated and anonymized information derived from data
+      that may be considered PII in some contexts (e.g., user locations or IP
+      addresses).
+      NuoDB uses Usage Information to monitor, analyze and improve the performance
+      and reliability of our Services, and to contribute to analytical models used by
+      NuoDB.  Usage Information is not shared with any third parties.  Insights also
+      includes a user dashboard that allows administrators to view the performance of
+      your NuoDB implementation.
+      If you agree to these terms, type "true" in the "Opt In" field on the following
+      input form to activate Insights. Any other value than "true" results in Opting out.
+      Insights can also be enabled at a later time if you choose.
+
+If you optionally choose to install NuoDB Insights, you can find your NuoDB Insights SubcriberID by locating the "nuodb-insights" pod, go to the Logs tab, and find the line that indicates your Subscriber ID
 ```
 Insights Subscriber ID: yourSubID#
 ```
