@@ -252,6 +252,7 @@ spec:
 Insights is a powerful visual database monitoring tool that can greatly aid in visualizing database workload and resource consumption. For more information about the benefits of Insights, please refer to:
         https://www.nuodb.com/product/insights
 
+```
 Insights is also part of NuoDB Services and Support in order to service our customers better and more efficently and is
       subject to our Terms of Use and Privacy Policy.
       Terms of Use and Privacy Policy
@@ -272,6 +273,7 @@ Insights is also part of NuoDB Services and Support in order to service our cust
       If you agree to these terms, type "true" in the "Opt In" field on the following
       input form to activate Insights. Any other value than "true" results in Opting out.
       Insights can also be enabled at a later time if you choose.
+```
 
 If you optionally choose to install NuoDB Insights, you can find your NuoDB Insights SubcriberID by locating the "nuodb-insights" pod, go to the Logs tab, and find the line that indicates your Subscriber ID
 ```
