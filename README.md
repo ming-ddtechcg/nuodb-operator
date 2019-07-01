@@ -277,9 +277,7 @@ After deploying your NuoDB database, if you optionally chose to install NuoDB In
 Insights Subscriber ID: yourSubID#
 ```
 To connect to NuoDB Insights, open a Web browser using the following URL
-```
 https://insights.nuodb.com/yourSubID#
-```
 
 ### Check the status of NuoDB Insights visual monitoring tool
 If you enabled NuoDB Insights (highly recommended) you can confirm it's run status by running:
