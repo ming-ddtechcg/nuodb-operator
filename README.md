@@ -320,6 +320,11 @@ kubectl delete -f local-disk-class.yaml
 
 
 # Delete the NuoDB Operator
+
+### OpenShift 4
+From the OpenShift WebUI, locate the OperatorHub under the Catalog left-bar selection. Select the NuoDB Operator and click the Uninstall button.
+
+### OpenShift 3.11
 Run the following commands
 
 ```
