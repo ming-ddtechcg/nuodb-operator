@@ -30,11 +30,11 @@ rules:
   verbs:
   - get
 - apiGroups:
-  - "extensions"
+  - extensions
   resources:
   - deployments
   verbs:
-  - *
+  - "*"
 - apiGroups:
   - apps
   resources:
