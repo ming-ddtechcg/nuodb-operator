@@ -26,7 +26,7 @@ install:
 before_script:
 # Following is just to demo that the kubernetes cluster works.
 # script/env-values.sh
-- scripts/verify-operator
+- scripts/verify_operator
 # scripts/build-operator
 - sudo minikube start --vm-driver=none --kubernetes-version=v1.15.0 --memory=8000 --cpus=4
 - "sudo chown -R travis: /home/travis/.minikube/"
@@ -57,6 +57,7 @@ script:
 - kubectl get nodes
 
 - scripts/test_operator.sh
+- scripts/test_scorecard_git.sh
 # Create example Redis deployment on Kubernetes.
 #- kubectl run travis-example --image=redis --labels="app=travis-example"
 # Make sure created pod is scheduled and running.
