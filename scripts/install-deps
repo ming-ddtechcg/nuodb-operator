@@ -12,6 +12,12 @@ sudo mv yq /usr/local/bin/
 echo "Installing operator-courier"
 python3 -m pip install operator-courier
 
+# SDK
+echo "Installing operator-sdk"
+SDK_VER="v0.6.0"
+curl -Lo operator-sdk "https://github.com/operator-framework/operator-sdk/releases/download/${SDK_VER}/operator-sdk-${SDK_VER}-x86_64-linux-gnu"
+chmod +x operator-sdk
+$SUDO mv operator-sdk /usr/local/bin/
 
 # Download kubectl, which is a requirement for using minikube.
 curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/v1.15.0/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
@@ -20,3 +26,5 @@ curl -Lo minikube https://storage.googleapis.com/minikube/releases/v1.2.0/miniku
 mkdir -p $HOME/.kube $HOME/.minikube
 touch $KUBECONFIG
 chmod +x scripts/test_operator.sh
+chmod +x scripts/verify_operator
+chmod +x scripts/test_scorecard_git.sh

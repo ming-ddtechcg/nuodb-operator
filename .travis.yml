@@ -26,7 +26,7 @@ install:
 before_script:
 # Following is just to demo that the kubernetes cluster works.
 # script/env-values.sh
-# scripts/verify-operator
+- scripts/verify-operator
 # scripts/build-operator
 - sudo minikube start --vm-driver=none --kubernetes-version=v1.15.0 --memory=8000 --cpus=4
 - "sudo chown -R travis: /home/travis/.minikube/"

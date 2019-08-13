@@ -1,0 +1,4 @@
+#!/bin/bash
+operator-courier verify olm-catalog/nuodb-operator/0.0.5/
+
+operator-courier verify --ui_validate_io olm-catalog/nuodb-operator/0.0.5/
