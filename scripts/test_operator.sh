@@ -74,4 +74,4 @@ kubectl get pods -n nuodb
 
 kubectl exec -it admin-0 /bin/bash nuocmd show domain -n nuodb
 
-kubectl get sc 
+
