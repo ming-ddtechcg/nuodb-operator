@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+TRAVIS_BUILD_DIR=/Users/ashukla/Documents/git/nuodb-operator
 OP_VER=0.0.5
 OP_PATH=${TRAVIS_BUILD_DIR}/deploy/olm-catalog/nuodb-operator/${OP_VER}/
 DEPLOY_DIR="${TRAVIS_BUILD_DIR}/deploy"
@@ -17,8 +17,11 @@ echo -e "\n\nRunning operator-sdk scorecard against "$CSV_NAME" with example "$(
 operator-sdk scorecard \
  --cr-manifest "$CR_FILE" \
  --crds-dir "$ABS_BUNDLE_PATH" \
- --olm-deployed \
  --csv-path "$CSV_FILE" \
  --namespace "$NAMESPACE" \
  --init-timeout 60 \
  --verbose
+
+sleep 20
+kubectl patch nuodb nuodb -p '{"metadata":{"finalizers":[]}}' --type=merge -n nuodb
+kubectl patch crd/nuodbs.nuodb.com -p '{"metadata":{"finalizers":[]}}' --type=merge

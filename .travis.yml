@@ -56,8 +56,8 @@ script:
 # Test nuodb-operator
 - kubectl get nodes
 
-- scripts/test_operator.sh
 - scripts/test_scorecard_git.sh
+- scripts/test_operator.sh
 # Create example Redis deployment on Kubernetes.
 #- kubectl run travis-example --image=redis --labels="app=travis-example"
 # Make sure created pod is scheduled and running.
