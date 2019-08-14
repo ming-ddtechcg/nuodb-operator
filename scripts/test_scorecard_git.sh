@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-TRAVIS_BUILD_DIR=/Users/ashukla/Documents/git/nuodb-operator
 OP_VER=0.0.5
 OP_PATH=${TRAVIS_BUILD_DIR}/deploy/olm-catalog/nuodb-operator/${OP_VER}/
 DEPLOY_DIR="${TRAVIS_BUILD_DIR}/deploy"
