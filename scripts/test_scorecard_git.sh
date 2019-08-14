@@ -7,6 +7,9 @@ ABS_BUNDLE_PATH="${DEPLOY_DIR}/olm-catalog/${PKG_NAME}/${OP_VER}"
 CR_DIR="${DEPLOY_DIR}/crds"
 NAMESPACE=nuodb
 
+echo "Create nuodb project..."
+kubectl create namespace $NAMESPACE
+
 CSV_FILE="$(find "$ABS_BUNDLE_PATH" -name "*${OP_VER}.clusterserviceversion.yaml" -print -quit)"
 CSV_NAME="$(yq r "$CSV_FILE" "metadata.name")"
 NAMESPACE=nuodb

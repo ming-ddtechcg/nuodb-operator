@@ -15,8 +15,6 @@ cd $TRAVIS_BUILD_DIR
 echo " This is travis working dir $(pwd)"
 
 
-echo "Create nuodb project..."
-kubectl create namespace $OPERATOR_NAMESPACE
 cd ${TESTDIR}/deploy
 
 export OPERATOR_NAMESPACE=nuodb
