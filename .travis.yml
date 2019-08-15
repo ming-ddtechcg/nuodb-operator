@@ -18,14 +18,14 @@ env:
     - KUBECONFIG=$HOME/.kube/config
 
 before_install:
-- chmod +x scripts/install-deps
+- chmod +x scripts/ci/install-deps.sh
 
 install:
-- scripts/install-deps
+- scripts/ci/install-deps.sh
 
 before_script:
-- scripts/verify_operator
-# scripts/build-operator
+- eval scripts/ci/verify_operator.sh
+- scripts/ci/build_operator.sh
 - sudo minikube start --vm-driver=none --kubernetes-version=v1.15.0 --memory=8000 --cpus=4
 - "sudo chown -R travis: /home/travis/.minikube/"
 - kubectl cluster-info
@@ -42,7 +42,7 @@ before_script:
 
 script:
 # Test with operator-sdk scorecard
-- scripts/test_scorecard_git.sh
+- scripts/ci/test_scorecard.sh
 
 # Test the nuodb deployment with operator olm
-- scripts/test_operator.sh
+- scripts/ci/test_operator.sh

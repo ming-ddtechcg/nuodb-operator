@@ -25,6 +25,7 @@ curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/v1.15
 curl -Lo minikube https://storage.googleapis.com/minikube/releases/v1.2.0/minikube-linux-amd64 && chmod +x minikube && sudo mv minikube /usr/local/bin/
 mkdir -p $HOME/.kube $HOME/.minikube
 touch $KUBECONFIG
-chmod +x scripts/test_operator.sh
-chmod +x scripts/verify_operator
-chmod +x scripts/test_scorecard_git.sh
+chmod +x scripts/ci/test_operator.sh
+chmod +x scripts/ci/verify_operator.sh
+chmod +x scripts/ci/build_operator.sh
+chmod +x scripts/ci/test_scorecard.sh

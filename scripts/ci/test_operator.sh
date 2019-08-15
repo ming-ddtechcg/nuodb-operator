@@ -18,7 +18,7 @@ echo " This is travis working dir $(pwd)"
 cd ${TESTDIR}/deploy
 
 export OPERATOR_NAMESPACE=nuodb
-kubectl create -n $OPERATOR_NAMESPACE -f https://raw.githubusercontent.com/k2ieger/testminikube/master/scripts/ci/secret.yaml
+kubectl create -n $OPERATOR_NAMESPACE -f https://raw.githubusercontent.com/k2ieger/testminikube/master/scripts/secret.yaml
 kubectl create -f local-disk-class.yaml
 kubectl create -f cluster_role_binding.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f operatorGroup.yaml
