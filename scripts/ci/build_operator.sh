@@ -4,17 +4,17 @@
 
 echo "Building operatot image and pushing"
 
-cd $TRAVIS_BUILD_DIR/nuodb-operator
+cd $TRAVIS_BUILD_DIR/
 CURRENTDIR=$(pwd)
 mkdir -p helm-charts/nuodb/
 echo "Current dir : $CURRENTDIR"
-cd $TRAVIS_BUILD_DIR
+cd ../
 git clone https://github.com/nuodb/nuodb-ce-helm.git
 cd nuodb-ce-helm/
 git checkout $HELM_BRANCH
 rm -fr .git/
-cd $TRAVIS_BUILD_DIR/nuodb-operator
-cp -a $TRAVIS_BUILD_DIR/nuodb-ce-helm/. $TRAVIS_BUILD_DIR/nuodb-operator/helm-charts/nuodb
+cd $TRAVIS_BUILD_DIR/
+cp -a ../nuodb-ce-helm/. $TRAVIS_BUILD_DIR/helm-charts/nuodb
 
 docker version
 echo "Docker login..."

@@ -18,7 +18,7 @@ echo " This is travis working dir $(pwd)"
 cd ${TESTDIR}/deploy
 
 export OPERATOR_NAMESPACE=nuodb
-kubectl create -n $OPERATOR_NAMESPACE -f https://raw.githubusercontent.com/k2ieger/testminikube/master/scripts/secret.yaml
+kubectl create -n $OPERATOR_NAMESPACE -f $TRAVIS_BUILD_DIR/scripts/ci/secret.yaml
 kubectl create -f local-disk-class.yaml
 kubectl create -f cluster_role_binding.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f operatorGroup.yaml
@@ -28,7 +28,7 @@ kubectl create -n $OPERATOR_NAMESPACE -f role_binding.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f service_account.yaml 
 kubectl patch serviceaccount nuodb-operator -p '{"imagePullSecrets": [{"name": "regcred"}]}' -n $OPERATOR_NAMESPACE
 kubectl create -f olm-catalog/nuodb-operator/0.0.5/nuodb.crd.yaml 
-#sed -i 's/"quay.io/ashukla/nuodb-operator:v0.0.5"/"quay.io/nuodb/nuodb-operator-staging:v0.0.5"/g' olm-catalog/nuodb-operator/0.0.5/nuodb.v0.0.5.clusterserviceversion.yaml
+sed -i 's/"quay.io/nuodb/nuodb-operator-staging:v0.0.5"/"$NUODB_OP_IMAGE"/g' olm-catalog/nuodb-operator/0.0.5/nuodb.v0.0.5.clusterserviceversion.yaml
 kubectl create  -n $OPERATOR_NAMESPACE -f olm-catalog/nuodb-operator/0.0.5/nuodb.v0.0.5.clusterserviceversion.yaml
 
 
