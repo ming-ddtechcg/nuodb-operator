@@ -28,8 +28,8 @@ kubectl create -n $OPERATOR_NAMESPACE -f role_binding.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f service_account.yaml 
 kubectl patch serviceaccount nuodb-operator -p '{"imagePullSecrets": [{"name": "regcred"}]}' -n $OPERATOR_NAMESPACE
 kubectl create -f olm-catalog/nuodb-operator/0.0.5/nuodb.crd.yaml 
-local dep_tmpl="spec.install.spec.deployments[0].spec.template.spec.containers[0].image"
-yq w olm-catalog/nuodb-operator/0.0.5/nuodb.v0.0.5.clusterserviceversion.yaml "$dep_tmpl" "$NUODB_OP_IMAGE"
+dep_tmpl="spec.install.spec.deployments[0].spec.template.spec.containers[0].image"
+yq w -i olm-catalog/nuodb-operator/0.0.5/nuodb.v0.0.5.clusterserviceversion.yaml "$dep_tmpl" "$NUODB_OP_IMAGE"
 kubectl create  -n $OPERATOR_NAMESPACE -f olm-catalog/nuodb-operator/0.0.5/nuodb.v0.0.5.clusterserviceversion.yaml
 
 
