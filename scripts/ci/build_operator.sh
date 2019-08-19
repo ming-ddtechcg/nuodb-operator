@@ -8,6 +8,7 @@ cd $TRAVIS_BUILD_DIR/
 CURRENTDIR=$(pwd)
 mkdir -p helm-charts/nuodb/
 echo "Current dir : $CURRENTDIR"
+echo "Build Tag  : $1"
 cd ../
 git clone https://github.com/nuodb/nuodb-ce-helm.git
 cd nuodb-ce-helm/
@@ -22,7 +23,7 @@ docker login -u $BOT_U -p $BOT_P $DOCKER_SERVER
 
 
 echo "Build NuoDB Operator..."
-export NUODB_OP_IMAGE=$DOCKER_SERVER/$REPO_NAME:v$TRAVIS_BUILD_NUMBER
+export NUODB_OP_IMAGE=$1
 echo "Build image tag $NUODB_OP_IMAGE"
 operator-sdk build $NUODB_OP_IMAGE
 docker push $NUODB_OP_IMAGE

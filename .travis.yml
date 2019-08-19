@@ -16,6 +16,7 @@ env:
     - MINIKUBE_HOME=$HOME
     - CHANGE_MINIKUBE_NONE_USER=true
     - KUBECONFIG=$HOME/.kube/config
+    - NUODB_OP_IMAGE=$DOCKER_SERVER/$REPO_NAME:v$TRAVIS_BUILD_NUMBER
 
 before_install:
 - chmod +x scripts/ci/install-deps.sh
@@ -25,7 +26,7 @@ install:
 
 before_script:
 - eval scripts/ci/verify_operator.sh
-- scripts/ci/build_operator.sh
+- scripts/ci/build_operator.sh $NUODB_OP_IMAGE
 - echo "Image Tag $NUODB_OP_IMAGE"
 - sudo minikube start --vm-driver=none --kubernetes-version=v1.15.0 --memory=8000 --cpus=4
 - "sudo chown -R travis: /home/travis/.minikube/"
