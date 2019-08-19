@@ -23,5 +23,6 @@ docker login -u $BOT_U -p $BOT_P $DOCKER_SERVER
 
 echo "Build NuoDB Operator..."
 export NUODB_OP_IMAGE=$DOCKER_SERVER/$REPO_NAME:v$TRAVIS_BUILD_NUMBER
+echo "Build image tag $NUODB_OP_IMAGE"
 operator-sdk build $NUODB_OP_IMAGE
 docker push $NUODB_OP_IMAGE

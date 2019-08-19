@@ -30,6 +30,7 @@ kubectl patch serviceaccount nuodb-operator -p '{"imagePullSecrets": [{"name": "
 kubectl create -f olm-catalog/nuodb-operator/0.0.5/nuodb.crd.yaml 
 dep_tmpl="spec.install.spec.deployments[0].spec.template.spec.containers[0].image"
 yq w -i olm-catalog/nuodb-operator/0.0.5/nuodb.v0.0.5.clusterserviceversion.yaml "$dep_tmpl" "$NUODB_OP_IMAGE"
+cat olm-catalog/nuodb-operator/0.0.5/nuodb.v0.0.5.clusterserviceversion.yaml
 kubectl create  -n $OPERATOR_NAMESPACE -f olm-catalog/nuodb-operator/0.0.5/nuodb.v0.0.5.clusterserviceversion.yaml
 
 
