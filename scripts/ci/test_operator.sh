@@ -18,7 +18,7 @@ echo " This is travis working dir $(pwd)"
 cd ${TESTDIR}/deploy
 
 export OPERATOR_NAMESPACE=nuodb
-kubectl create secret docker-registry regcred --namespace=nuodb --docker-server=$DOCKER_SERVER --docker-username=$BOT_U --docker-password=$BOT_U --docker-email=""
+kubectl create secret docker-registry regcred --namespace=nuodb --docker-server=$DOCKER_SERVER --docker-username=$BOT_U --docker-password=$BOT_P --docker-email=""
 kubectl create -f local-disk-class.yaml
 kubectl create -f cluster_role_binding.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f operatorGroup.yaml
