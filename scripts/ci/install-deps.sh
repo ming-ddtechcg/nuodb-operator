@@ -29,3 +29,19 @@ chmod +x scripts/ci/test_operator.sh
 chmod +x scripts/ci/verify_operator.sh
 chmod +x scripts/ci/build_operator.sh
 chmod +x scripts/ci/test_scorecard.sh
+
+
+sudo minikube start --vm-driver=none --kubernetes-version=v1.15.0 --memory=8000 --cpus=4
+sudo chown -R travis: /home/travis/.minikube/
+kubectl cluster-info
+# Verify kube-addon-manager.
+# kube-addon-manager is responsible for managing other kubernetes components, such as kube-dns, dashboard, storage-provisioner..
+JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}'; until kubectl -n kube-system get pods -lcomponent=kube-addon-manager -o jsonpath="$JSONPATH" 2>&1 | grep -q "Ready=True"; do sleep 1;echo "waiting for kube-addon-manager to be available"; kubectl get pods --all-namespaces; done
+# Wait for kube-dns to be ready.
+JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}'; until kubectl -n kube-system get pods -lk8s-app=kube-dns -o jsonpath="$JSONPATH" 2>&1 | grep -q "Ready=True"; do sleep 1;echo "waiting for kube-dns to be available"; kubectl get pods --all-namespaces; done
+#Install OLM on minikube
+curl -L https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.11.0/install.sh -o install.sh
+chmod +x install.sh
+./install.sh 0.11.0 
+
+kubectl get nodes

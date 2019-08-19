@@ -9,14 +9,6 @@ kubectl get nodes
 kubectl label node ${NODE} nuodb.com/node-type=storage
 kubectl label node ${NODE} nuodb.com/zone=nuodb --overwrite=true
 
-echo "THis is the image Image Tag $NUODB_OP_IMAGE"
-echo "THis is the image Image Tag $1"
-
-
-cd $TRAVIS_BUILD_DIR
-echo " This is travis working dir $(pwd)"
-
-
 cd ${TESTDIR}/deploy
 
 export OPERATOR_NAMESPACE=nuodb
@@ -32,7 +24,6 @@ kubectl patch serviceaccount nuodb-operator -p '{"imagePullSecrets": [{"name": "
 kubectl create -f olm-catalog/nuodb-operator/0.0.5/nuodb.crd.yaml 
 dep_tmpl="spec.install.spec.deployments[0].spec.template.spec.containers[0].image"
 yq w -i olm-catalog/nuodb-operator/0.0.5/nuodb.v0.0.5.clusterserviceversion.yaml "$dep_tmpl" "$NUODB_OP_IMAGE"
-cat olm-catalog/nuodb-operator/0.0.5/nuodb.v0.0.5.clusterserviceversion.yaml
 kubectl create  -n $OPERATOR_NAMESPACE -f olm-catalog/nuodb-operator/0.0.5/nuodb.v0.0.5.clusterserviceversion.yaml
 
 

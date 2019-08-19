@@ -15,6 +15,10 @@ CSV_NAME="$(yq r "$CSV_FILE" "metadata.name")"
 NAMESPACE=nuodb
 CR_FILE=$DEPLOY_DIR/cr-test.yaml
 
+
+dep_tmpl="spec.install.spec.deployments[0].spec.template.spec.containers[0].image"
+yq w -i ${DEPLOY_DIR}/olm-catalog/nuodb-operator/0.0.5/nuodb.v0.0.5.clusterserviceversion.yaml "$dep_tmpl" "$NUODB_OP_IMAGE"
+
 echo -e "\n\nRunning operator-sdk scorecard against "$CSV_NAME" with example "$(cat "$CR_FILE" | yq r - "kind")""
 operator-sdk scorecard \
  --cr-manifest "$CR_FILE" \
