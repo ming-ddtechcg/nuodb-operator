@@ -2,7 +2,7 @@
 
 #This script will build and push image for further testing.
 
-echo "Building operatot image and pushing"
+echo "Building operator image and pushing"
 
 cd $TRAVIS_BUILD_DIR/
 CURRENTDIR=$(pwd)
