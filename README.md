@@ -138,8 +138,8 @@ ip-10-0-206-8.ec2.internal     Ready    worker   15d   v1.13.4+cb455d664   nuodb
 
 &ensp; `kubectl create configmap nuodb-lic-configmap -n $OPERATOR_NAMESPACE --from-literal=nuodb.lic=""`
 
-### 9. Create the Kubernetes image pull secret to access the Red Hat Container Catalog (RHCC).
-**Note:** If using Quay.io to pull the NuoDB Operator image, a secret is not required because the NuoDB Quay.io repository is public.
+### 9. If using the Red Hat Container Catalog (RHCC) to pull images, then create the Kubernetes image pull secret
+**Note:** If using Quay.io to pull the NuoDB Operator image, a login to quay.io and a Kubernetes secret is not required because the NuoDB Quay.io repository is public. For example, to pull the image from quay.io, run "docker pull quay.io/nuodb/nuodb-operator"
 
 This secret will be used to pull the NuoDB Operator and NuoDB container images from the  Red Hat Container
 Catalog (RHCC). Enter your Red Hat login credentials for the --docker-username and --docker-password values.
@@ -175,7 +175,7 @@ In OpenShift 4.x, the NuoDB Operator is available to install directly from the O
 
 ### OpenShift 3.11 
 
-#### Install the Operator Lifecycle Manager (OLM)
+#### If not already installed, then install the Operator Lifecycle Manager (OLM)
 ```
 kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.1/crds.yaml
 kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.1/olm.yaml
