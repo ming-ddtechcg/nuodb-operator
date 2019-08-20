@@ -180,7 +180,7 @@ In OpenShift 4.x, the NuoDB Operator is available to install directly from the O
 kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.1/crds.yaml
 kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.1/olm.yaml
 ```
-#### If not already installed, then install the Operator Marketplace
+#### If not already installed, then install the Operator Marketplace (Optional)
 
 Clone the Operator marketplace repository
 ```
@@ -190,7 +190,7 @@ Then apply the following file to your cluster.
 ```
 kubectl apply -f deploy/upstream
 ```   
-Note: If you experience the following error when running the catalogSource.yaml file in the next section, then you need to install the Operator Marketplace.
+Note: If you experience the following error when running the catalogSource.yaml file in the next section, then you can install the Operator Marketplace to resolve this error. However, the error can also be ignored. The NuoDB Operator will install successfully without the Operator Marketplace.
 ```
 error: unable to recognize "catalogSource.yaml": no matches for kind "OperatorSource" in version "operators.coreos.com/v1"
 ```
