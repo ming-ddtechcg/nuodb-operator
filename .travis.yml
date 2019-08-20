@@ -1,0 +1,36 @@
+sudo: required
+# We need the systemd for the kubeadm and it's default from 16.04+
+dist: xenial
+language: python
+os: linux
+sudo: required
+
+python:
+- "3.6"
+
+env:
+  global:
+    - CHANGE_MINIKUBE_NONE_USER=true
+    - MINIKUBE_WANTUPDATENOTIFICATION=false
+    - MINIKUBE_WANTREPORTERRORPROMPT=false
+    - MINIKUBE_HOME=$HOME
+    - CHANGE_MINIKUBE_NONE_USER=true
+    - KUBECONFIG=$HOME/.kube/config
+    - NUODB_OP_IMAGE=$DOCKER_SERVER/$REPO_NAME:v$TRAVIS_BUILD_NUMBER
+
+before_install:
+- chmod +x scripts/ci/install-deps.sh
+
+install:
+- scripts/ci/install-deps.sh
+
+before_script:
+- eval scripts/ci/verify_operator.sh
+- scripts/ci/build_operator.sh
+
+script:
+# Test with operator-sdk scorecard
+- scripts/ci/test_scorecard.sh
+
+# Test the nuodb deployment with operator olm
+- scripts/ci/test_operator.sh

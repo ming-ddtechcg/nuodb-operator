@@ -9,16 +9,10 @@ kubectl get nodes
 kubectl label node ${NODE} nuodb.com/node-type=storage
 kubectl label node ${NODE} nuodb.com/zone=nuodb --overwrite=true
 
-
-
-cd $TRAVIS_BUILD_DIR
-echo " This is travis working dir $(pwd)"
-
-
 cd ${TESTDIR}/deploy
 
 export OPERATOR_NAMESPACE=nuodb
-kubectl create -n $OPERATOR_NAMESPACE -f https://raw.githubusercontent.com/k2ieger/testminikube/master/scripts/ci/secret.yaml
+kubectl create secret docker-registry regcred --namespace=nuodb --docker-server=$DOCKER_SERVER --docker-username=$BOT_U --docker-password=$BOT_P --docker-email=""
 kubectl create -f local-disk-class.yaml
 kubectl create -f cluster_role_binding.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f operatorGroup.yaml
@@ -28,7 +22,8 @@ kubectl create -n $OPERATOR_NAMESPACE -f role_binding.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f service_account.yaml 
 kubectl patch serviceaccount nuodb-operator -p '{"imagePullSecrets": [{"name": "regcred"}]}' -n $OPERATOR_NAMESPACE
 kubectl create -f olm-catalog/nuodb-operator/0.0.5/nuodb.crd.yaml 
-#sed -i 's/"quay.io/ashukla/nuodb-operator:v0.0.5"/"quay.io/nuodb/nuodb-operator-staging:v0.0.5"/g' olm-catalog/nuodb-operator/0.0.5/nuodb.v0.0.5.clusterserviceversion.yaml
+dep_tmpl="spec.install.spec.deployments[0].spec.template.spec.containers[0].image"
+yq w -i olm-catalog/nuodb-operator/0.0.5/nuodb.v0.0.5.clusterserviceversion.yaml "$dep_tmpl" "$NUODB_OP_IMAGE"
 kubectl create  -n $OPERATOR_NAMESPACE -f olm-catalog/nuodb-operator/0.0.5/nuodb.v0.0.5.clusterserviceversion.yaml
 
 
