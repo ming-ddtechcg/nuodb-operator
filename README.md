@@ -35,7 +35,7 @@ This page is organized in the following sections:
 
 ## Install Prerequisites
 
-_**Note:** The instructions on this page use the Kubernetes&ensp;`kubectl` command for command portability reasons. You can replace the kubectl command with the OpenShift&ensp;`oc` command when running commands if you prefer._
+_**Note:** The instructions on this page use the Kubernetes&ensp;`kubectl` command (for portability reasons) but the command is a Linux alias that points to the OpenShift client program "oc"._
 
 ### 1. Create the "nuodb" project (if not already created)
 
