@@ -182,7 +182,7 @@ kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manage
 ```
 #### If not already installed, then install the Operator Marketplace
 
-Please clone the Operator marketplace repository
+Clone the Operator marketplace repository
 ```
 https://github.com/operator-framework/operator-marketplace
 ```
@@ -190,7 +190,7 @@ Then apply the following file to your cluster.
 ```
 kubectl apply -f deploy/upstream
 ```   
-Note: If you experience an error running the catalogSource.yaml file in the next section, then you need to run this step.
+Note: If you experience the following error when running the catalogSource.yaml file in the next section, then you need to install the Operator Marketplace.
 ```
 error: unable to recognize "catalogSource.yaml": no matches for kind "OperatorSource" in version "operators.coreos.com/v1"
 ```
