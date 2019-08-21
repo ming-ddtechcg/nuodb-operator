@@ -47,7 +47,7 @@ kubectl create configmap nuodb-lic-configmap --from-literal=nuodb.lic="" -n $OPE
 
 
 echo "Create the Custom Resource to deploy NuoDB..."
-kubectl create -n $OPERATOR_NAMESPACE -f cr-test.yaml
+kubectl create -n $OPERATOR_NAMESPACE -f ${TESTDIR}/tests/cr-test.yaml
 
 echo "Sleeping for a while"
  sleep 20
