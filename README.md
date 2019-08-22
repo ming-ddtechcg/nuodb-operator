@@ -35,7 +35,7 @@ This page is organized in the following sections:
 
 ## Install Prerequisites
 
-_**Note:** The instructions on this page use the Kubernetes&ensp;`kubectl` command for command portability reasons. You can replace the kubectl command with the OpenShift&ensp;`oc` command when running commands if you prefer._
+_**Note:** The instructions on this page use the Kubernetes&ensp;`kubectl` command (for portability reasons) but the command is a Linux alias that points to the OpenShift client program&ensp;`oc`._
 
 ### 1. Create the "nuodb" project (if not already created)
 
@@ -55,12 +55,13 @@ In your home or working directory, run:
 ```
 export OPERATOR_NAMESPACE=nuodb
 export STORAGE_NODE=yourStorageNodeDNSName
+export NUODB_OPERATOR_VERSION=0.0.5 --confirm you set the correction version here.
 ```
 
 ### 5. Disable Linux Transparent Huge Pages (THP) on each cluster node
-Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers). These commands will disable THP.
+**Note:** This step is for NuoDB Operator version only
 
-**Note:** If the nodes are rebooted THP will be reenabled by default, and the commands will need to executed again to disable THP.
+Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers). These commands will disable THP. If the nodes are rebooted THP will be reenabled by default, and the commands will need to executed again to disable THP.
 
 ```
 echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/enabled
@@ -138,8 +139,8 @@ ip-10-0-206-8.ec2.internal     Ready    worker   15d   v1.13.4+cb455d664   nuodb
 
 &ensp; `kubectl create configmap nuodb-lic-configmap -n $OPERATOR_NAMESPACE --from-literal=nuodb.lic=""`
 
-### 9. Create the Kubernetes image pull secret to access the Red Hat Container Catalog (RHCC).
-**Note:** If using Quay.io to pull the NuoDB Operator image, a secret is not required because the NuoDB Quay.io repository is public.
+### 9. If using the Red Hat Container Catalog (RHCC) to pull images, then create the Kubernetes image pull secret
+**Note:** If using Quay.io to pull the NuoDB Operator image, a login to quay.io and a Kubernetes secret is not required because the NuoDB Quay.io repository is public. For example, to pull the image from quay.io, run at the command prompt, docker pull quay.io/nuodb/nuodb-operator
 
 This secret will be used to pull the NuoDB Operator and NuoDB container images from the  Red Hat Container
 Catalog (RHCC). Enter your Red Hat login credentials for the --docker-username and --docker-password values.
@@ -175,11 +176,26 @@ In OpenShift 4.x, the NuoDB Operator is available to install directly from the O
 
 ### OpenShift 3.11 
 
-#### Install the Operator Lifecycle Manager (OLM)
+#### If not already installed, then install the Operator Lifecycle Manager (OLM)
 ```
 kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.1/crds.yaml
 kubectl apply -f https://github.com/operator-framework/operator-lifecycle-manager/releases/download/0.10.1/olm.yaml
 ```
+#### If not already installed, then install the Operator Marketplace (Optional)
+
+Clone the Operator marketplace repository
+```
+https://github.com/operator-framework/operator-marketplace
+```
+Then apply the following file to your cluster.
+```
+kubectl apply -f deploy/upstream
+```   
+Note: If you experience the following error when running the catalogSource.yaml file in the next section, then you can install the Operator Marketplace to resolve this error. However, the error can also be ignored. The NuoDB Operator will install successfully without the Operator Marketplace.
+```
+error: unable to recognize "catalogSource.yaml": no matches for kind "OperatorSource" in version "operators.coreos.com/v1"
+```
+
 #### Run the NuoDB Operator yaml files
 ```
 cd nuodb-operator/deploy
@@ -190,8 +206,17 @@ kubectl create -n $OPERATOR_NAMESPACE -f cluster_role.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f role.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f role_binding.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f service_account.yaml 
-kubectl create -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml 
-sed "s/placeholder/$OPERATOR_NAMESPACE/" olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml > nuodb-csv.yaml
+kubectl create -f olm-catalog/nuodb-operator/$NUODB_OPERATOR_VERSION/nuodb.crd.yaml 
+
+-- Steps to automatically disable THP (Transparent Huge Pages) on working node containers
+-- Add a custom security context to allow privileged container for thp-disable 
+kubectl create -n $OPERATOR_NAMESPACE -f thp-scc.yaml
+oc adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:nuodb-operator
+oc adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:default
+oc adm policy add-scc-to-user privileged system:serviceaccount:nuodb:nuodb-operator
+oc adm policy add-scc-to-user privileged  system:serviceaccount:nuodb:default
+
+sed "s/placeholder/$OPERATOR_NAMESPACE/" olm-catalog/nuodb-operator/$NUODB_OPERATOR_VERSION/nuodb.v$NUODB_OPERATOR_VERSION.clusterserviceversion.yaml > nuodb-csv.yaml
 kubectl create  -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
  ```
 Once you have completed these steps, verify the NuoDB Operator running in OpenShift project. 
