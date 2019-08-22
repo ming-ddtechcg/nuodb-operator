@@ -59,7 +59,7 @@ export NUODB_OPERATOR_VERSION=0.0.5 --confirm you set the correction version her
 ```
 
 ### 5. Disable Linux Transparent Huge Pages (THP) on each cluster node
-**Note:** This step is for NuoDB Operator version only
+**Note:** This step is for NuoDB Operator version .0.0.4 only
 
 Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers). These commands will disable THP. If the nodes are rebooted THP will be reenabled by default, and the commands will need to executed again to disable THP.
 
