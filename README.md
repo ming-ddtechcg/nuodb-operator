@@ -55,10 +55,11 @@ In your home or working directory, run:
 ```
 export OPERATOR_NAMESPACE=nuodb
 export STORAGE_NODE=yourStorageNodeDNSName
+export NUODB_OPERATOR_VERSION=0.0.5 --confirm you set the correction version here.
 ```
 
 ### 5. Disable Linux Transparent Huge Pages (THP) on each cluster node
-**Note:** This step is for NuoDB Operator version 0.0.4 only
+**Note:** This step is for NuoDB Operator version only
 
 Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers). These commands will disable THP. If the nodes are rebooted THP will be reenabled by default, and the commands will need to executed again to disable THP.
 
@@ -205,7 +206,7 @@ kubectl create -n $OPERATOR_NAMESPACE -f cluster_role.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f role.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f role_binding.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f service_account.yaml 
-kubectl create -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml 
+kubectl create -f olm-catalog/nuodb-operator/$NUODB_OPERATOR_VERSION/nuodb.crd.yaml 
 
 -- Steps to automatically disable THP (Transparent Huge Pages) on working node containers
 -- Add a custom security context to allow privileged container for thp-disable 
@@ -215,7 +216,7 @@ oc adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:default
 oc adm policy add-scc-to-user privileged system:serviceaccount:nuodb:nuodb-operator
 oc adm policy add-scc-to-user privileged  system:serviceaccount:nuodb:default
 
-sed "s/placeholder/$OPERATOR_NAMESPACE/" olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml > nuodb-csv.yaml
+sed "s/placeholder/$OPERATOR_NAMESPACE/" olm-catalog/nuodb-operator/NUODB_OPERATOR_VERSION/nuodb.v$NUODB_OPERATOR_VERSION.clusterserviceversion.yaml > nuodb-csv.yaml
 kubectl create  -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
  ```
 Once you have completed these steps, verify the NuoDB Operator running in OpenShift project. 
