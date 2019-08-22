@@ -57,7 +57,7 @@ export OPERATOR_NAMESPACE=nuodb
 export STORAGE_NODE=yourStorageNodeDNSName
 ```
 
-### 5. Disable Linux Transparent Huge Pages (THP) on each cluster node
+### 5. Disable Linux Transparent Huge Pages (THP) on each cluster node (For NuoDB Operator version 0.0.4 only)
 Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers). These commands will disable THP.
 
 **Note:** If the nodes are rebooted THP will be reenabled by default, and the commands will need to executed again to disable THP.
@@ -207,8 +207,8 @@ kubectl create -n $OPERATOR_NAMESPACE -f role_binding.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f service_account.yaml 
 kubectl create -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml 
 
--- Steps to disable THP (Transparent Huge Pages) on working node containers
--- add a custom security context to allow privileged container for thp-disable 
+-- Steps to automatically disable THP (Transparent Huge Pages) on working node containers
+-- Add a custom security context to allow privileged container for thp-disable 
 kubectl create -n $OPERATOR_NAMESPACE -f thp-scc.yaml
 oc adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:nuodb-operator
 oc adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:default
