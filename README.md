@@ -216,7 +216,7 @@ oc adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:default
 oc adm policy add-scc-to-user privileged system:serviceaccount:nuodb:nuodb-operator
 oc adm policy add-scc-to-user privileged  system:serviceaccount:nuodb:default
 
-sed "s/placeholder/$OPERATOR_NAMESPACE/" olm-catalog/nuodb-operator/NUODB_OPERATOR_VERSION/nuodb.v$NUODB_OPERATOR_VERSION.clusterserviceversion.yaml > nuodb-csv.yaml
+sed "s/placeholder/$OPERATOR_NAMESPACE/" olm-catalog/nuodb-operator/$NUODB_OPERATOR_VERSION/nuodb.v$NUODB_OPERATOR_VERSION.clusterserviceversion.yaml > nuodb-csv.yaml
 kubectl create  -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
  ```
 Once you have completed these steps, verify the NuoDB Operator running in OpenShift project. 
