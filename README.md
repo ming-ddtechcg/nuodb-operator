@@ -206,6 +206,15 @@ kubectl create -n $OPERATOR_NAMESPACE -f role.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f role_binding.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f service_account.yaml 
 kubectl create -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml 
+
+-- Steps to disable THP (Transparent Huge Pages) on working node containers
+-- add a custom security context to allow privileged container for thp-disable 
+kubectl create -n $OPERATOR_NAMESPACE -f thp-scc.yaml
+oc adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:nuodb-operator
+oc adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:default
+oc adm policy add-scc-to-user privileged system:serviceaccount:nuodb:nuodb-operator
+oc adm policy add-scc-to-user privileged  system:serviceaccount:nuodb:default
+
 sed "s/placeholder/$OPERATOR_NAMESPACE/" olm-catalog/nuodb-operator/0.0.4/nuodb.v0.0.4.clusterserviceversion.yaml > nuodb-csv.yaml
 kubectl create  -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
  ```
