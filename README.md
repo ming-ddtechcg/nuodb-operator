@@ -160,7 +160,7 @@ To install the NuoDB Operator into your Kubernetes cluster, follow the steps ind
 
 In OpenShift 4.x, the NuoDB Operator is available to install directly from the OpenShift OperatorHub, an integrated service catalog, accessible from within the OpenShift 4 Web UI which creates a seamless - single click experience - that allows users to install the NuoDB Operator from catalog-to-cluster in seconds.
 
-**Pre-requisite:** To create a NuoDB database, you must first from a command prompt run the following commands that will allow for the disabling of the Linux Transparent Huge Pages (THP) feature on the NUoDB container nodes.
+**Pre-requisite:** To create a NuoDB database, you must first run the following Kubernetes adm policy commands from a command prompt that will allow for the disabling of the Linux Transparent Huge Pages (THP) feature on the NUoDB container nodes.
 ```
 kubectl adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:nuodb-operator
 kubectl adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:default   
@@ -216,8 +216,8 @@ kubectl create -n $OPERATOR_NAMESPACE -f role_binding.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f service_account.yaml 
 kubectl create -f olm-catalog/nuodb-operator/$NUODB_OPERATOR_VERSION/nuodb.crd.yaml 
 
--- To create a NuoDB database, you must run the following adm policy commands
--- that will allow for the disabling of the Linux Transparent Huge Pages (THP) feature on the NUoDB container nodes
+-- To create a NuoDB database, you must run the Kubernetes adm policy commands from a command prompt that will
+-- allow for the disabling of the Linux Transparent Huge Pages (THP) feature on the NUoDB container nodes
 kubectl create -n $OPERATOR_NAMESPACE -f thp-scc.yaml
 kubectl adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:nuodb-operator
 kubectl adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:default
