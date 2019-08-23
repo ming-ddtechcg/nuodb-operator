@@ -55,7 +55,7 @@ In your home or working directory, run:
 ```
 export OPERATOR_NAMESPACE=nuodb
 export STORAGE_NODE=yourStorageNodeDNSName
-export NUODB_OPERATOR_VERSION=0.0.5 --confirm you set the correction version here.
+export NUODB_OPERATOR_VERSION=0.0.5           --confirm you set the correction NuoDB Operator version here.
 ```
 
 ### 5. Disable Linux Transparent Huge Pages (THP) on each cluster node
@@ -70,10 +70,10 @@ echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/defrag
 
 ### 6. Set container storage pre-requisites
 
-Red hat GlusterFS storage is the default storage class for both NuoDB Admin and Storage Manager (SM) pods. 
+Amazon EBS storage (storageclass gp2) is the default storage class for both NuoDB Admin and Storage Manager (SM) pods. 
 If you would like to change the default, please see below: 
 
-#### FOR ON-PREM: Set container local-storage permissions on each cluster node
+#### FOR ON-PREM local storage: Set container local storage permissions on each cluster node to hostpath local storage.
 **Note:** When using the local disk storage option only 1 Admin pod is supported.
 
 ```
@@ -160,6 +160,13 @@ To install the NuoDB Operator into your Kubernetes cluster, follow the steps ind
 
 In OpenShift 4.x, the NuoDB Operator is available to install directly from the OpenShift OperatorHub, an integrated service catalog, accessible from within the OpenShift 4 Web UI which creates a seamless - single click experience - that allows users to install the NuoDB Operator from catalog-to-cluster in seconds.
 
+Pre-requisite: To create a NuoDB database, you must first from a command prompt run the following commands that will allow for the disabling of the Linux Transparent Huge Pages (THP) feature on the NUoDB container nodes
+
+   kubectl adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:nuodb-operator
+   kubectl adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:default
+   kubectl adm policy add-scc-to-user privileged system:serviceaccount:nuodb:nuodb-operator
+   kubectl adm policy add-scc-to-user privileged  system:serviceaccount:nuodb:default
+
 1. Select &ensp;`Projects` from the OpenShift 4 left toolbar and click the &ensp;`NuoDB` project to make
    it your current project.
 2. Select the &ensp;`OperatorHub` under the &ensp;`Catalog` section in the OCP 4 left toolbar.
@@ -208,13 +215,13 @@ kubectl create -n $OPERATOR_NAMESPACE -f role_binding.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f service_account.yaml 
 kubectl create -f olm-catalog/nuodb-operator/$NUODB_OPERATOR_VERSION/nuodb.crd.yaml 
 
--- Steps to automatically disable THP (Transparent Huge Pages) on working node containers
--- Add a custom security context to allow privileged container for thp-disable 
+-- To create a NuoDB database, you must run the following adm policy commands
+-- that will allow for the disabling of the Linux Transparent Huge Pages (THP) feature on the NUoDB container nodes
 kubectl create -n $OPERATOR_NAMESPACE -f thp-scc.yaml
-oc adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:nuodb-operator
-oc adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:default
-oc adm policy add-scc-to-user privileged system:serviceaccount:nuodb:nuodb-operator
-oc adm policy add-scc-to-user privileged  system:serviceaccount:nuodb:default
+kubectl adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:nuodb-operator
+kubectl adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:default
+kubectl adm policy add-scc-to-user privileged system:serviceaccount:nuodb:nuodb-operator
+kubectl adm policy add-scc-to-user privileged  system:serviceaccount:nuodb:default
 
 sed "s/placeholder/$OPERATOR_NAMESPACE/" olm-catalog/nuodb-operator/$NUODB_OPERATOR_VERSION/nuodb.v$NUODB_OPERATOR_VERSION.clusterserviceversion.yaml > nuodb-csv.yaml
 kubectl create  -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
