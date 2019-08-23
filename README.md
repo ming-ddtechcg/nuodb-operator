@@ -73,7 +73,8 @@ echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/defrag
 Amazon EBS storage (storageclass gp2) is the default storage class for both NuoDB Admin and Storage Manager (SM) pods. 
 If you would like to change the default, please see below: 
 
-#### FOR ON-PREM local storage: Set container local storage permissions on each cluster node to hostpath local storage.
+#### FOR ON-PREM local storage: 
+Set the local storage permissions on each cluster node to enable hostpath local storage for the Admin and Storage Manager (SM) pods.
 **Note:** When using the local disk storage option only 1 Admin pod is supported.
 
 ```
