@@ -37,10 +37,14 @@ This page is organized in the following sections:
 
 _**Note:** The instructions on this page use the Kubernetes&ensp;`kubectl` command (for portability reasons) but the command is a Linux alias that points to the OpenShift client program&ensp;`oc`._
 
-### 1. Create the "nuodb" project (if not already created)
 
-&ensp; `kubectl create namespace nuodb`
+### 1. Create environment variables
 
+```
+export OPERATOR_NAMESPACE=nuodb
+export STORAGE_NODE=yourStorageNodeDNSName
+export NUODB_OPERATOR_VERSION=0.0.5           --confirm you set the correction NuoDB Operator version here.
+```
 ### 2. Clone a copy of the NuoDB Operator from Github
 In your home or working directory, run:
 
@@ -50,15 +54,15 @@ In your home or working directory, run:
 
 &ensp; `Example: kubectl login -u system:admin`
 
-### 4. Create environment variables
+### 4. Create the "nuodb" project (if not already created)
 
-```
-export OPERATOR_NAMESPACE=nuodb
-export STORAGE_NODE=yourStorageNodeDNSName
-export NUODB_OPERATOR_VERSION=0.0.5           --confirm you set the correction NuoDB Operator version here.
-```
+&ensp; `kubectl create namespace $OPERATOR_NAMESPACE`
 
-### 5. Disable Linux Transparent Huge Pages (THP) on each cluster node
+### 5. Set the OpenShift project value
+
+&ensp; `kubectl project $OPERATOR_NAMESPACE`
+
+### 6. Disable Linux Transparent Huge Pages (THP) on each cluster node
 **Note:** This step is only required for the previous NuoDB Operator version 0.0.4.
 
 Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers). These commands will disable THP. If the nodes are rebooted THP will be reenabled by default, and the commands will need to executed again to disable THP.
@@ -68,7 +72,7 @@ echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/enabled
 echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/defrag
 ```
 
-### 6. Set container storage pre-requisites
+### 7. Set container storage pre-requisites
 
 Amazon EBS storage (storageclass gp2) is the default storage class for both NuoDB Admin and Storage Manager (SM) pods. 
 If you would like to change the default, please see below: 
@@ -114,7 +118,7 @@ adminStorageClass: <3rd-party storageClassName>
 smStorageClass: <3rd-party storageClassName>
 ```
 
-### 7. Cluster Node Labeling
+### 8. Cluster Node Labeling
 Label the cluster nodes you want to run NuoDB pods.
 
 &ensp; `kubectl  label node <node name> nuodb.com/zone=nuodb`
@@ -136,11 +140,11 @@ ip-10-0-184-233.ec2.internal   Ready    worker   15d   v1.13.4+cb455d664   nuodb
 ip-10-0-206-8.ec2.internal     Ready    worker   15d   v1.13.4+cb455d664   nuodb 
 ```
 
-### 8. Create the NuoDB Community Edition (CE) license file
+### 9. Create the NuoDB Community Edition (CE) license file
 
 &ensp; `kubectl create configmap nuodb-lic-configmap -n $OPERATOR_NAMESPACE --from-literal=nuodb.lic=""`
 
-### 9. If using the Red Hat Container Catalog (RHCC) to pull images, then create the Kubernetes image pull secret
+### 10. If using the Red Hat Container Catalog (RHCC) to pull images, then create the Kubernetes image pull secret
 **Note:** If using Quay.io to pull the NuoDB Operator image, a login to quay.io and a Kubernetes secret is not required because the NuoDB Quay.io repository is public. For example, to pull the image from quay.io, run at the command prompt, docker pull quay.io/nuodb/nuodb-operator
 
 This secret will be used to pull the NuoDB Operator and NuoDB container images from the  Red Hat Container
