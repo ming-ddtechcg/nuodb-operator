@@ -37,10 +37,14 @@ This page is organized in the following sections:
 
 _**Note:** The instructions on this page use the Kubernetes&ensp;`kubectl` command (for portability reasons) but the command is a Linux alias that points to the OpenShift client program&ensp;`oc`._
 
-### 1. Create the "nuodb" project (if not already created)
 
-&ensp; `kubectl create namespace nuodb`
+### 1. Create environment variables
 
+```
+export OPERATOR_NAMESPACE=nuodb
+export STORAGE_NODE=yourStorageNodeDNSName
+export NUODB_OPERATOR_VERSION=0.0.5           --confirm you set the correction NuoDB Operator version here.
+```
 ### 2. Clone a copy of the NuoDB Operator from Github
 In your home or working directory, run:
 
@@ -50,16 +54,16 @@ In your home or working directory, run:
 
 &ensp; `Example: kubectl login -u system:admin`
 
-### 4. Create environment variables
+### 4. Create the "nuodb" project (if not already created)
 
-```
-export OPERATOR_NAMESPACE=nuodb
-export STORAGE_NODE=yourStorageNodeDNSName
-export NUODB_OPERATOR_VERSION=0.0.5 --confirm you set the correction version here.
-```
+&ensp; `kubectl create namespace $OPERATOR_NAMESPACE`
 
-### 5. Disable Linux Transparent Huge Pages (THP) on each cluster node
-**Note:** This step is for NuoDB Operator version .0.0.4 only
+### 5. Set the OpenShift project value
+
+&ensp; `kubectl project $OPERATOR_NAMESPACE`
+
+### 6. Disable Linux Transparent Huge Pages (THP) on each cluster node
+**Note:** This step is only required for the previous NuoDB Operator version 0.0.4.
 
 Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers). These commands will disable THP. If the nodes are rebooted THP will be reenabled by default, and the commands will need to executed again to disable THP.
 
@@ -68,12 +72,13 @@ echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/enabled
 echo madvise | sudo tee -a /sys/kernel/mm/transparent_hugepage/defrag
 ```
 
-### 6. Set container storage pre-requisites
+### 7. Set container storage pre-requisites
 
-Red hat GlusterFS storage is the default storage class for both NuoDB Admin and Storage Manager (SM) pods. 
+Amazon EBS storage (storageclass gp2) is the default storage class for both NuoDB Admin and Storage Manager (SM) pods. 
 If you would like to change the default, please see below: 
 
-#### FOR ON-PREM: Set container local-storage permissions on each cluster node
+#### FOR ON-PREM local storage (using Hostpath): 
+Set the local storage permissions on each cluster node to enable hosting storage for either the Admin or the Storage Manager (SM) pods.
 **Note:** When using the local disk storage option only 1 Admin pod is supported.
 
 ```
@@ -113,7 +118,7 @@ adminStorageClass: <3rd-party storageClassName>
 smStorageClass: <3rd-party storageClassName>
 ```
 
-### 7. Cluster Node Labeling
+### 8. Cluster Node Labeling
 Label the cluster nodes you want to run NuoDB pods.
 
 &ensp; `kubectl  label node <node name> nuodb.com/zone=nuodb`
@@ -135,11 +140,11 @@ ip-10-0-184-233.ec2.internal   Ready    worker   15d   v1.13.4+cb455d664   nuodb
 ip-10-0-206-8.ec2.internal     Ready    worker   15d   v1.13.4+cb455d664   nuodb 
 ```
 
-### 8. Create the NuoDB Community Edition (CE) license file
+### 9. Create the NuoDB Community Edition (CE) license file
 
 &ensp; `kubectl create configmap nuodb-lic-configmap -n $OPERATOR_NAMESPACE --from-literal=nuodb.lic=""`
 
-### 9. If using the Red Hat Container Catalog (RHCC) to pull images, then create the Kubernetes image pull secret
+### 10. If using the Red Hat Container Catalog (RHCC) to pull images, then create the Kubernetes image pull secret
 **Note:** If using Quay.io to pull the NuoDB Operator image, a login to quay.io and a Kubernetes secret is not required because the NuoDB Quay.io repository is public. For example, to pull the image from quay.io, run at the command prompt, docker pull quay.io/nuodb/nuodb-operator
 
 This secret will be used to pull the NuoDB Operator and NuoDB container images from the  Red Hat Container
@@ -208,13 +213,8 @@ kubectl create -n $OPERATOR_NAMESPACE -f role_binding.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f service_account.yaml 
 kubectl create -f olm-catalog/nuodb-operator/$NUODB_OPERATOR_VERSION/nuodb.crd.yaml 
 
--- Steps to automatically disable THP (Transparent Huge Pages) on working node containers
--- Add a custom security context to allow privileged container for thp-disable 
+-- To create a NuoDB database, the inux Transparent Huge Pages (THP) feature must be disabled on the NUoDB container nodes
 kubectl create -n $OPERATOR_NAMESPACE -f thp-scc.yaml
-oc adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:nuodb-operator
-oc adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:default
-oc adm policy add-scc-to-user privileged system:serviceaccount:nuodb:nuodb-operator
-oc adm policy add-scc-to-user privileged  system:serviceaccount:nuodb:default
 
 sed "s/placeholder/$OPERATOR_NAMESPACE/" olm-catalog/nuodb-operator/$NUODB_OPERATOR_VERSION/nuodb.v$NUODB_OPERATOR_VERSION.clusterserviceversion.yaml > nuodb-csv.yaml
 kubectl create  -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
@@ -332,13 +332,11 @@ Delete the NuoDB persistent storage volumes claims
 ```
 kubectl delete -n $OPERATOR_NAMESPACE pvc --all 
 ```
-Delete the NuoDB Storage Manager(SM) disk storage (if the local-disk storage class was used)
-See following OpenShift 4 example: 
+If the local-disk storage class was used, then delete the NuoDB Storage Manager(SM) disk storage and storage class
 ```
 ssh -i ~/Documents/cluster.pem $JUMP_HOST
 ssh -i ~/.ssh/cluster.pem core@ip-n-n-n-n.ec2.internal  'rm -rf /mnt/local-storage/disk0/*'
 
-# Delete local-disk storage class 
 kubectl delete -f local-disk-class.yaml
 ```
 
@@ -356,14 +354,15 @@ kubectl delete -n $OPERATOR_NAMESPACE configmap nuodb-lic-configmap
 
 cd nuodb-operator/deploy
 kubectl delete -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
-kubectl delete -f catalogSource.yaml
+kubectl delete -f service_account.yaml
+kubectl delete -f role_binding.yaml
+kubectl delete -f role.yaml
 kubectl delete -f cluster_role_binding.yaml
-kubectl delete -n $OPERATOR_NAMESPACE -f operatorGroup.yaml
-kubectl delete -n $OPERATOR_NAMESPACE -f cluster_role.yaml
-kubectl delete -n $OPERATOR_NAMESPACE -f role.yaml
-kubectl delete -n $OPERATOR_NAMESPACE -f role_binding.yaml
-kubectl delete -n $OPERATOR_NAMESPACE -f service_account.yaml
-kubectl delete -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml
+kubectl delete -f cluster_role.yaml
+kubectl delete -f operatorGroup.yaml
+kubectl delete -f catalogSource.yaml
+kubectl delete -f thp-scc.yaml
+kubectl delete -f olm-catalog/nuodb-operator/$NUODB_OPERATOR_VERSION/nuodb.crd.yaml
 ```
 Next, delete the crd finalizer by running this command, remove the finalizer line after "Finalizer:", and run the final crd delete commmand
 ```
