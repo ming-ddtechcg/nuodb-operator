@@ -59,7 +59,7 @@ export NUODB_OPERATOR_VERSION=0.0.5           --confirm you set the correction N
 ```
 
 ### 5. Disable Linux Transparent Huge Pages (THP) on each cluster node
-**Note:** This step is for NuoDB Operator version .0.0.4 only
+**Note:** This step is only required for the previous NuoDB Operator version 0.0.4.
 
 Run these commands as the root user (or a user with root group privileges) on each cluster node that will host NuoDB pods (containers). These commands will disable THP. If the nodes are rebooted THP will be reenabled by default, and the commands will need to executed again to disable THP.
 
@@ -161,14 +161,6 @@ To install the NuoDB Operator into your Kubernetes cluster, follow the steps ind
 
 In OpenShift 4.x, the NuoDB Operator is available to install directly from the OpenShift OperatorHub, an integrated service catalog, accessible from within the OpenShift 4 Web UI which creates a seamless - single click experience - that allows users to install the NuoDB Operator from catalog-to-cluster in seconds.
 
-**Pre-requisite:** To create a NuoDB database, you must first run the following Kubernetes adm policy commands from a command prompt that will allow for the disabling of the Linux Transparent Huge Pages (THP) feature on the NUoDB container nodes.
-```
-kubectl adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:nuodb-operator
-kubectl adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:default   
-kubectl adm policy add-scc-to-user privileged system:serviceaccount:nuodb:nuodb-operator
-kubectl adm policy add-scc-to-user privileged  system:serviceaccount:nuodb:default
-```
-
 1. Select &ensp;`Projects` from the OpenShift 4 left toolbar and click the &ensp;`NuoDB` project to make
    it your current project.
 2. Select the &ensp;`OperatorHub` under the &ensp;`Catalog` section in the OCP 4 left toolbar.
@@ -217,13 +209,8 @@ kubectl create -n $OPERATOR_NAMESPACE -f role_binding.yaml
 kubectl create -n $OPERATOR_NAMESPACE -f service_account.yaml 
 kubectl create -f olm-catalog/nuodb-operator/$NUODB_OPERATOR_VERSION/nuodb.crd.yaml 
 
--- To create a NuoDB database, you must run the Kubernetes adm policy commands from a command prompt that will
--- allow for the disabling of the Linux Transparent Huge Pages (THP) feature on the NUoDB container nodes
+-- To create a NuoDB database, the inux Transparent Huge Pages (THP) feature must be disabled on the NUoDB container nodes
 kubectl create -n $OPERATOR_NAMESPACE -f thp-scc.yaml
-kubectl adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:nuodb-operator
-kubectl adm policy add-scc-to-user thp-scc system:serviceaccount:nuodb:default
-kubectl adm policy add-scc-to-user privileged system:serviceaccount:nuodb:nuodb-operator
-kubectl adm policy add-scc-to-user privileged  system:serviceaccount:nuodb:default
 
 sed "s/placeholder/$OPERATOR_NAMESPACE/" olm-catalog/nuodb-operator/$NUODB_OPERATOR_VERSION/nuodb.v$NUODB_OPERATOR_VERSION.clusterserviceversion.yaml > nuodb-csv.yaml
 kubectl create  -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
@@ -365,14 +352,15 @@ kubectl delete -n $OPERATOR_NAMESPACE configmap nuodb-lic-configmap
 
 cd nuodb-operator/deploy
 kubectl delete -n $OPERATOR_NAMESPACE -f nuodb-csv.yaml
-kubectl delete -f catalogSource.yaml
+kubectl delete -f service_account.yaml
+kubectl delete -f role_binding.yaml
+kubectl delete -f role.yaml
 kubectl delete -f cluster_role_binding.yaml
-kubectl delete -n $OPERATOR_NAMESPACE -f operatorGroup.yaml
-kubectl delete -n $OPERATOR_NAMESPACE -f cluster_role.yaml
-kubectl delete -n $OPERATOR_NAMESPACE -f role.yaml
-kubectl delete -n $OPERATOR_NAMESPACE -f role_binding.yaml
-kubectl delete -n $OPERATOR_NAMESPACE -f service_account.yaml
-kubectl delete -f olm-catalog/nuodb-operator/0.0.4/nuodb.crd.yaml
+kubectl delete -f cluster_role.yaml
+kubectl delete -f operatorGroup.yaml
+kubectl delete -f catalogSource.yaml
+kubectl delete -f thp-scc.yaml
+kubectl delete -f olm-catalog/nuodb-operator/$NUODB_OPERATOR_VERSION/nuodb.crd.yaml
 ```
 Next, delete the crd finalizer by running this command, remove the finalizer line after "Finalizer:", and run the final crd delete commmand
 ```
